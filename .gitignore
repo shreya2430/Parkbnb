@@ -14,6 +14,10 @@
 
 # AWS User-specific
 .idea/**/aws.xml
+target/
+*.iml
+*.ipr
+
 
 # Generated files
 .idea
