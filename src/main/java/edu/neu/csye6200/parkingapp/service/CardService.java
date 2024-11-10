@@ -17,7 +17,7 @@ public class CardService {
     @Autowired
     RenteeRepository renteeRepository;
 
-    CardDTO addCard(CardDTO cardDTO) {
+    public CardDTO addCard(CardDTO cardDTO) {
         // Add card to the database
         Card card = new Card();
         card.setLast4(cardDTO.getLast4());
@@ -34,7 +34,7 @@ public class CardService {
         return convertToDTO(card);
     }
 
-    List<CardDTO> getCardsByRenteeId(Long renteeId) {
+    public List<CardDTO> getCardsByRenteeId(Long renteeId) {
         // Retrieve cards from the database
         List<Card> cards = cardRepository.findByRenteeId(renteeId);
         return cards.stream()
