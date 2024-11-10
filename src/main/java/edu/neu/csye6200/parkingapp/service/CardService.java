@@ -6,10 +6,12 @@ import edu.neu.csye6200.parkingapp.model.Rentee;
 import edu.neu.csye6200.parkingapp.repository.CardRepository;
 import edu.neu.csye6200.parkingapp.repository.RenteeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class CardService {
     @Autowired
     CardRepository cardRepository;

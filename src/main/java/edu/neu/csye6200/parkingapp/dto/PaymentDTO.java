@@ -2,9 +2,10 @@ package edu.neu.csye6200.parkingapp.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-
+@NoArgsConstructor
 public class PaymentDTO {
     private Long id; // Auto-generated, so no validation needed
 
