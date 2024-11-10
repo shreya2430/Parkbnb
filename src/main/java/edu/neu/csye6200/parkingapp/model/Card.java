@@ -7,10 +7,6 @@ import java.time.LocalDate;
 @Table(name = "cards")
 public class Card extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Internal primary key for database management
-
     @Column(length = 4, nullable = false)
     private String last4; // Last 4 digits of the card number
 
@@ -28,15 +24,6 @@ public class Card extends BaseEntity {
     private Rentee rentee;
 
     // Getters and Setters
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
 
     public String getLast4() {
         return last4;
