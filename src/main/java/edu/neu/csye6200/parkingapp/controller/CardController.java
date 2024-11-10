@@ -23,7 +23,7 @@ CardService cardService;
         return new ResponseEntity<>(createdCard, HttpStatus.CREATED);
     }
 
-    @GetMapping("rentee/{renteeId}")
+    @GetMapping("/rentee/{renteeId}")
     public ResponseEntity<List<CardDTO>>  getCardsByRenteeId(@PathVariable Long renteeId) {
         final List<CardDTO> cardsByRenteeId = cardService.getCardsByRenteeId(renteeId);
         return ResponseEntity.ok(cardsByRenteeId);
