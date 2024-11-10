@@ -3,9 +3,10 @@ package edu.neu.csye6200.parkingapp.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-
+@NoArgsConstructor
 public class CardDTO {
 
     private Long id;
