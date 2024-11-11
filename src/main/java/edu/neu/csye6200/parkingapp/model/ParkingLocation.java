@@ -1,11 +1,13 @@
 package edu.neu.csye6200.parkingapp.model;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "parkinglocation")
 public class ParkingLocation extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "street",nullable = false , length = 20)
     private  String street;
@@ -28,6 +30,11 @@ public class ParkingLocation extends BaseEntity {
     @Column(name = "longitude",nullable = false , length = 30)
     private  String longitude;
 
+    // Foreign Key relationship with Renter
+    @ManyToOne
+    @JoinColumn(name = "renter_id",nullable = false)
+    private Renter renter;
+
     public String getStreet() { return street; }
     public void setStreet(String street) { this.street = street; }
 
@@ -48,6 +55,9 @@ public class ParkingLocation extends BaseEntity {
 
     public String getLongitude() { return longitude; }
     public void setLongitude(String longitude) { this.longitude = longitude; }
+
+    public Renter getRenter() { return renter; }
+    public void setRenter(Renter renter) { this.renter = renter; }
 
 
 

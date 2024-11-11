@@ -26,14 +26,20 @@ public class ParkingLocationDTO {
     @Size(min = 3, max = 20, message = "Country name must be between 3 and 20 characters")
     private String country;
 
+    private String latitude;
+    private String longitude;
+    private Long renterId;
 
-    public ParkingLocationDTO(long id, String street, String city, String state, String postalcode, String country) {
+    public ParkingLocationDTO(long id, String street, String city, String state, String postalcode, String country, String latitude, String longitude,Long renterId) {
         this.id = id;
         this.street = street;
         this.city = city;
         this.state = state;
         this.postalcode = postalcode;
         this.country = country;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.renterId = renterId;
     }
 
 
@@ -58,6 +64,15 @@ public class ParkingLocationDTO {
 
     public String getCountry() {return country; }
     public void setCountry(String country) {this.country = country; }
+
+    public String getLatitude() {return latitude; }
+    public void setLatitude(String latitude) {this.latitude = latitude; }
+
+    public String getLongitude() {return longitude; }
+    public void setLongitude(String longitude) {this.longitude = longitude; }
+
+    public Long getRenterId() {return renterId; }
+    public void setRenterId(Long renterId) {this.renterId = renterId; }
 
 
 }
