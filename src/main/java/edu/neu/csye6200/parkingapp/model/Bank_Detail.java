@@ -1,8 +1,6 @@
 package edu.neu.csye6200.parkingapp.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name="bank_details")
@@ -12,6 +10,11 @@ public class Bank_Detail extends BaseEntity {
 
         @Column(name = "bank_detail_id", nullable = false, length = 20)
         private Long bank_detail_id;
+
+        // Foreign Key relationship with Renter
+        @ManyToOne
+        @JoinColumn(name = "renter_id",nullable = false)
+        private Renter renter;
 
         @Column(name = "bank_name", nullable = false, length = 20)
         private String bank_name;
@@ -34,6 +37,9 @@ public class Bank_Detail extends BaseEntity {
         public void setbank_detail_id(Long bank_detail_id) {
             this.bank_detail_id = bank_detail_id;
         }
+
+        public Renter getRenter() { return renter; }
+        public void setRenter(Renter renter) { this.renter = renter; }
 
         public String getbank_name() {
         return bank_name;

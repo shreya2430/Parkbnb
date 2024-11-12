@@ -9,6 +9,7 @@ public class Bank_DetailDTO {
 
 
         private Long bank_detail_id;
+        private Long renterId;
         @NotBlank(message = "Bank name is required")
         @Size(min = 2, max = 20, message = "Bank name must be between 2 and 20 characters")
         private String bank_name;
@@ -24,8 +25,9 @@ public class Bank_DetailDTO {
 
 
 
-        public Bank_DetailDTO(Long bank_detail_id, String bank_name, String account_type, Long account_number, Long routing_number) {
+        public Bank_DetailDTO(Long bank_detail_id, Long renterId,String bank_name, String account_type, Long account_number, Long routing_number) {
             this.bank_detail_id = bank_detail_id;
+            this.renterId = renterId;
             this.bank_name = bank_name;
             this.account_type = account_type;
             this.account_number = account_number;
@@ -40,6 +42,15 @@ public class Bank_DetailDTO {
         public void setbank_detail_id(Long bank_detail_id) {
             this.bank_detail_id = bank_detail_id;
         }
+
+        public Long getRenterId() {
+        return renterId;
+    }
+
+        public void setRenterId(Long renterId) {
+        this.renterId = renterId;
+    }
+
 
         public String getbank_name() {
             return bank_name;
