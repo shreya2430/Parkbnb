@@ -1,61 +1,70 @@
 package edu.neu.csye6200.parkingapp.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class RefundDTO {
 
+    private Long id; // Inherited primary key
+    private Long renteeId;
 
+    @NotNull(message = "Refund status is required")
+    @Size(min = 2, max = 20, message = "Refund status must be between 2 and 20 characters")
+    private String refundStatus;
 
-    private Long refund_id;
-    private String refund_status;
-    private double refund_amount;
-    private Long stripe_refund_id;
+    @NotNull(message = "Refund amount is required")
+    private double refundAmount;
 
+    @NotNull(message = "Stripe refund ID is required")
+    private Long stripeRefundId;
 
-
-    public RefundDTO(Long refund_id, String refund_status, double refund_amount, Long stripe_refund_id) {
-        this.refund_id = refund_id;
-        this.refund_status = refund_status;
-        this.refund_amount = refund_amount;
-        this.stripe_refund_id = stripe_refund_id;
-
+    // Constructor
+    public RefundDTO(Long id, Long renteeId, String refundStatus, double refundAmount, Long stripeRefundId) {
+        this.id = id;
+        this.renteeId = renteeId;
+        this.refundStatus = refundStatus;
+        this.refundAmount = refundAmount;
+        this.stripeRefundId = stripeRefundId;
     }
 
-    public Long getrefund_id() {
-        return refund_id;
+    // Getters and Setters
+    public Long getId() {
+        return id;
     }
 
-    public void setrefund_id(Long id) {
-        this.refund_id = refund_id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getrefund_status() {
-        return refund_status;
+    public Long getRenteeId() {
+        return renteeId;
     }
 
-    public void setrefund_status(String refund_status) {
-        this.refund_status = refund_status;
+    public void setRenteeId(Long renteeId) {
+        this.renteeId = renteeId;
     }
 
-    public double getrefund_amount() {
-        return refund_amount;
+    public String getRefundStatus() {
+        return refundStatus;
     }
 
-    public void setrefund_amount(double refund_amount) {
-        this.refund_amount = refund_amount;
+    public void setRefundStatus(String refundStatus) {
+        this.refundStatus = refundStatus;
     }
 
-    public Long getstripe_refund_id() {
-        return stripe_refund_id;
+    public double getRefundAmount() {
+        return refundAmount;
     }
 
-    public void setstripe_refund_id(Long stripe_refund_id) {
-        this.stripe_refund_id = stripe_refund_id;
+    public void setRefundAmount(double refundAmount) {
+        this.refundAmount = refundAmount;
     }
 
+    public Long getStripeRefundId() {
+        return stripeRefundId;
+    }
 
+    public void setStripeRefundId(Long stripeRefundId) {
+        this.stripeRefundId = stripeRefundId;
+    }
 }
-
-

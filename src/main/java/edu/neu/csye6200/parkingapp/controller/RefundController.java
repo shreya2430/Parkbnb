@@ -12,7 +12,7 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping("/api/refund")
+@RequestMapping("/api/refunds")
 
 public class RefundController {
 
@@ -21,9 +21,9 @@ public class RefundController {
     @Autowired
     private RefundService refundService;
 
-    @GetMapping("/{refund_id}")
-    public ResponseEntity<RefundDTO> getRefund(@PathVariable Long refund_id) {
-        Optional<RefundDTO> refundDTO = refundService.getByrefund_id(refund_id);
+    @GetMapping("/{id}")
+    public ResponseEntity<RefundDTO> getRefund(@PathVariable Long id) {
+        Optional<RefundDTO> refundDTO = refundService.getById(id);
         if (refundDTO.isPresent()) {
             return ResponseEntity.ok(refundDTO.get());
         } else {
