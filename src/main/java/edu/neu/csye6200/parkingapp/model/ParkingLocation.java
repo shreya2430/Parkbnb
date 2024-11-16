@@ -5,9 +5,6 @@ import jakarta.persistence.*;
 @Table(name = "parkinglocation")
 public class ParkingLocation extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(name = "street",nullable = false , length = 20)
     private  String street;

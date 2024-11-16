@@ -24,9 +24,9 @@ public class ParkingSpotService {
     public Optional<ParkingSpotDTO> getParkingSpotById(Long id) {
         Optional<ParkingSpot> parkingSpot = parkingSpotRepository.findById(id);
         if (parkingSpot.isPresent()) {
-            ParkingSpot r = parkingSpot.get();
-            Long parkingLocationId = (r.getId() != null) ? r.getId() : null; // Retrieve parking location ID if available
-            ParkingSpotDTO parkingSpotDTO = new ParkingSpotDTO(r.getId(),r.getSpotNumber(),r.getSpotType(),r.isAvailable(),r.getPricePerHour(),r.getParkingSpotImage(),parkingLocationId);
+            ParkingSpot ps = parkingSpot.get();
+            Long parkingLocationId = (ps.getParkingLocation() != null) ? ps.getParkingLocation().getId() : null; // Retrieve parking location ID if available
+            ParkingSpotDTO parkingSpotDTO = new ParkingSpotDTO(ps.getId(),ps.getSpotNumber(),ps.getSpotType(),ps.isAvailable(),ps.getPricePerHour(),ps.getParkingSpotImage(),parkingLocationId);
             return Optional.of(parkingSpotDTO);
         }
         return Optional.empty();
