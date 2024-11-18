@@ -30,6 +30,16 @@ public class RenterController {
         }
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<RenterDTO> login(@RequestBody RenterDTO renterDTO) {
+        Optional<RenterDTO> existingUser = renterService.findUserByEmailAndPassword(renterDTO.getEmail(), renterDTO.getPassword());
+        if (existingUser.isPresent()) {
+            return ResponseEntity.ok(existingUser.get());
+        } else {
+            return ResponseEntity.status(401).body(null);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<RenterDTO> createRenter(@Valid @RequestBody RenterDTO renterDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

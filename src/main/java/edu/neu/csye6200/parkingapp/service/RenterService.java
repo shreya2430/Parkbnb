@@ -26,6 +26,10 @@ public class RenterService {
         return Optional.empty();
     }
 
+    public Optional<RenterDTO> findUserByEmailAndPassword(String email, String password) {
+        return renterRepository.findByEmailAndPassword(email, password);
+    }
+
     public RenterDTO saveRenter(@Valid RenterDTO renterDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             // Handle validation errors
