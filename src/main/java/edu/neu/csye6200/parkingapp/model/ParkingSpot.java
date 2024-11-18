@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 @Table(name = "parkingspot")
 public class ParkingSpot extends BaseEntity {
 
-
     @Column(name = "spotNumber",nullable = false , length = 10)
     private  String spotNumber;
 
@@ -18,9 +17,6 @@ public class ParkingSpot extends BaseEntity {
 
     @Column(name = "pricePerHour",nullable = false)
     private  double pricePerHour;
-
-    @Column(name = "parkingSpotImage",nullable = false , length = 100)
-    private  String parkingSpotImage;
 
     // Foreign Key relationship with Parking Location
     @ManyToOne
@@ -38,9 +34,6 @@ public class ParkingSpot extends BaseEntity {
 
     public double getPricePerHour() { return pricePerHour;}
     public void setPricePerHour(double pricePerHour) { this.pricePerHour = pricePerHour;}
-
-    public String getParkingSpotImage() { return parkingSpotImage;}
-    public void setParkingSpotImage(String parkingSpotImage) { this.parkingSpotImage = parkingSpotImage;}
 
     public ParkingLocation getParkingLocation() { return parkingLocation;}
     public void setParkingLocation(ParkingLocation parkingLocation) { this.parkingLocation = parkingLocation;}

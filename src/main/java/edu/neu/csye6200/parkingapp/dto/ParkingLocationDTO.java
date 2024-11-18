@@ -28,9 +28,13 @@ public class ParkingLocationDTO {
 
     private String latitude;
     private String longitude;
+
+    @NotBlank(message = "Parking Location Image is required")
+    private  String parkingLocationImage;
+
     private Long renterId;
 
-    public ParkingLocationDTO(long id, String street, String city, String state, String postalcode, String country, String latitude, String longitude,Long renterId) {
+    public ParkingLocationDTO(long id, String street, String city, String state, String postalcode, String country, String latitude, String longitude, String parkingLocationImage, Long renterId) {
         this.id = id;
         this.street = street;
         this.city = city;
@@ -39,9 +43,9 @@ public class ParkingLocationDTO {
         this.country = country;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.parkingLocationImage = parkingLocationImage;
         this.renterId = renterId;
     }
-
 
     public Long getId() {
         return id;
@@ -71,8 +75,9 @@ public class ParkingLocationDTO {
     public String getLongitude() {return longitude; }
     public void setLongitude(String longitude) {this.longitude = longitude; }
 
+    public String getParkingLocationImage() { return parkingLocationImage;}
+    public void setParkingLocationImage(String parkingLocationImage) { this.parkingLocationImage = parkingLocationImage;}
+
     public Long getRenterId() {return renterId; }
     public void setRenterId(Long renterId) {this.renterId = renterId; }
-
-
 }
