@@ -1,16 +1,14 @@
 package edu.neu.csye6200.parkingapp.controller;
 
 import edu.neu.csye6200.parkingapp.dto.ParkingLocationDTO;
+import edu.neu.csye6200.parkingapp.dto.ParkingSpotDTO;
 import edu.neu.csye6200.parkingapp.service.ParkingLocationService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-
+import java.util.List;
 import java.util.Optional;
 
 
@@ -40,5 +38,11 @@ public class ParkingLocationController {
 
         ParkingLocationDTO savedParkingLocation = parkingLocationService.saveParkingLocation(parkingLocationDTO, bindingResult);
         return ResponseEntity.ok(savedParkingLocation);
+    }
+
+    @GetMapping("/{id}/available-spots")
+    public ResponseEntity<List<ParkingSpotDTO>> getAvailableParkingSpots(@PathVariable Long id) {
+        List<ParkingSpotDTO> availableSpots = parkingLocationService.getAvailableSpots(id);
+        return ResponseEntity.ok(availableSpots);
     }
 }

@@ -24,20 +24,15 @@ public class ParkingSpotDTO {
     @DecimalMax(value = "1000.0", message = "Price per hour must be less than or equal to 1000")
     private double pricePerHour;
 
-    @NotBlank(message = "Spot Image is required")
-    @Size(min = 10, max = 100)
-    private String spotImage;
-
     private Long parkingLocationId;
 
-    public ParkingSpotDTO(long id,String spotNumber, String spotType, boolean isAvailable, double pricePerHour, String spotImage, Long parkingLocationId) {
+    public ParkingSpotDTO(long id,String spotNumber, String spotType, boolean isAvailable, double pricePerHour, Long parkingLocationId) {
 
         this.id = id;
         this.spotNumber = spotNumber;
         this.spotType = spotType;
         this.isAvailable = isAvailable;
         this.pricePerHour = pricePerHour;
-        this.spotImage = spotImage;
         this.parkingLocationId = parkingLocationId;
     }
 
@@ -55,9 +50,6 @@ public class ParkingSpotDTO {
 
     public double getPricePerHour() { return pricePerHour; }
     public void setPricePerHour(double pricePerHour) { this.pricePerHour = pricePerHour; }
-
-    public String getSpotImage() { return spotImage; }
-    public void setSpotImage(String spotImage) { this.spotImage = spotImage; }
 
     public Long getParkingLocationId() { return parkingLocationId; }
     public void setParkingLocationId(Long parkingLocationId) { this.parkingLocationId = parkingLocationId;}

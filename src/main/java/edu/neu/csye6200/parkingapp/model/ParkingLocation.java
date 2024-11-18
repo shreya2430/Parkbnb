@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 @Table(name = "parkinglocation")
 public class ParkingLocation extends BaseEntity {
 
-
     @Column(name = "street",nullable = false , length = 20)
     private  String street;
 
@@ -56,7 +55,8 @@ public class ParkingLocation extends BaseEntity {
     public Renter getRenter() { return renter; }
     public void setRenter(Renter renter) { this.renter = renter; }
 
-
-
-
+    // Method to generate the image file name
+    public String getImageFileName() {
+        return getId() + ".jpg";
+    }
 }

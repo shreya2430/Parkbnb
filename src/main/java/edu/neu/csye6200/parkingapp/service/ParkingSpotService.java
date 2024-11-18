@@ -26,7 +26,7 @@ public class ParkingSpotService {
         if (parkingSpot.isPresent()) {
             ParkingSpot ps = parkingSpot.get();
             Long parkingLocationId = (ps.getParkingLocation() != null) ? ps.getParkingLocation().getId() : null; // Retrieve parking location ID if available
-            ParkingSpotDTO parkingSpotDTO = new ParkingSpotDTO(ps.getId(),ps.getSpotNumber(),ps.getSpotType(),ps.isAvailable(),ps.getPricePerHour(),ps.getParkingSpotImage(),parkingLocationId);
+            ParkingSpotDTO parkingSpotDTO = new ParkingSpotDTO(ps.getId(),ps.getSpotNumber(),ps.getSpotType(),ps.isAvailable(),ps.getPricePerHour(),parkingLocationId);
             return Optional.of(parkingSpotDTO);
         }
         return Optional.empty();
@@ -44,7 +44,6 @@ public class ParkingSpotService {
         parkingSpot.setSpotType(parkingSpotDTO.getSpotType());
         parkingSpot.setAvailable(parkingSpotDTO.isAvailable());
         parkingSpot.setPricePerHour(parkingSpotDTO.getPricePerHour());
-        parkingSpot.setParkingSpotImage(parkingSpotDTO.getSpotImage());
 
         // Set parking location if parking location is provided
         if (parkingSpotDTO.getParkingLocationId() != null) {
@@ -57,6 +56,6 @@ public class ParkingSpotService {
         ParkingSpot saveParkingSpot = parkingSpotRepository.save(parkingSpot);
 
         // Return the saved entity as DTO
-        return new ParkingSpotDTO(saveParkingSpot.getId(),saveParkingSpot.getSpotNumber(),saveParkingSpot.getSpotType(),saveParkingSpot.isAvailable(),saveParkingSpot.getPricePerHour(),saveParkingSpot.getParkingSpotImage(),saveParkingSpot.getParkingLocation().getId());
+        return new ParkingSpotDTO(saveParkingSpot.getId(),saveParkingSpot.getSpotNumber(),saveParkingSpot.getSpotType(),saveParkingSpot.isAvailable(),saveParkingSpot.getPricePerHour(),saveParkingSpot.getParkingLocation().getId());
     }
 }
