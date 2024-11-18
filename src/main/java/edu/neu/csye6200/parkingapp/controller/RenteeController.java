@@ -1,6 +1,7 @@
 package edu.neu.csye6200.parkingapp.controller;
 
 import edu.neu.csye6200.parkingapp.dto.RenteeDTO;
+import edu.neu.csye6200.parkingapp.dto.RenterDTO;
 import edu.neu.csye6200.parkingapp.service.RenteeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,16 @@ public class RenteeController {
             return ResponseEntity.ok(renteeDTO.get());
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<RenteeDTO> login(@RequestBody RenteeDTO renteeDTO) {
+        Optional<RenteeDTO> existingUser = renteeService.findUserByEmailAndPassword(renteeDTO.getEmail(), renteeDTO.getPassword());
+        if (existingUser.isPresent()) {
+            return ResponseEntity.ok(existingUser.get());
+        } else {
+            return ResponseEntity.status(401).body(null);
         }
     }
 

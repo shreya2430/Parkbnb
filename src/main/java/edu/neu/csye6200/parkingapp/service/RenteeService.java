@@ -1,6 +1,7 @@
 package edu.neu.csye6200.parkingapp.service;
 
 import edu.neu.csye6200.parkingapp.dto.RenteeDTO;
+import edu.neu.csye6200.parkingapp.dto.RenterDTO;
 import edu.neu.csye6200.parkingapp.model.Rentee;
 import edu.neu.csye6200.parkingapp.repository.RenteeRepository;
 import jakarta.validation.Valid;
@@ -24,6 +25,10 @@ public class RenteeService {
             return Optional.of(renteeDTO);
         }
         return Optional.empty();
+    }
+
+    public Optional<RenteeDTO> findUserByEmailAndPassword(String email, String password) {
+        return renteeRepository.findByEmailAndPassword(email, password);
     }
 
     public RenteeDTO saveRentee(@Valid RenteeDTO renteeDTO, BindingResult bindingResult) {
