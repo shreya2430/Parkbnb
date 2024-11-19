@@ -3,28 +3,28 @@ package edu.neu.csye6200.parkingapp.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="review")
+@Table(name="reviews")
 public class Review extends BaseEntity {
 
     @Column(name = "description", nullable = false, length = 100)
-    private String description;
+    private String comment;
 
     // Foreign key to Rentee
     @ManyToOne
     @JoinColumn(name = "rentee_id", nullable = false, foreignKey = @ForeignKey(name = "FK_RESERVATION_RENTEE"))
     private Rentee rentee;
 
-    // Foreign key to ParkingSpot
+    // Foreign key to ParkingLocation
     @ManyToOne
-    @JoinColumn(name = "parking_spot_id", nullable = false, foreignKey = @ForeignKey(name = "FK_RESERVATION_PARKING_SPOT"))
-    private ParkingSpot parkingSpot;
+    @JoinColumn(name = "parking_location_id", nullable = false, foreignKey = @ForeignKey(name = "FK_RESERVATION_PARKING_LOCATION"))
+    private ParkingLocation parkingLocation;
 
-    public String getDescription() {
-        return description;
+    public String getComment() {
+        return comment;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public Rentee getRentee() {
@@ -35,11 +35,11 @@ public class Review extends BaseEntity {
         this.rentee = rentee;
     }
 
-    public ParkingSpot getParkingSpot() {
-        return parkingSpot;
+    public ParkingLocation getParkingLocation() {
+        return parkingLocation;
     }
 
-    public void setParkingSpot(ParkingSpot parkingSpot) {
-        this.parkingSpot = parkingSpot;
+    public void setParkingLocation(ParkingLocation parkingLocation) {
+        this.parkingLocation = parkingLocation;
     }
 }

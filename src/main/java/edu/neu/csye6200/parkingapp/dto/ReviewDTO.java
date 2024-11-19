@@ -1,58 +1,70 @@
 package edu.neu.csye6200.parkingapp.dto;
 
-import edu.neu.csye6200.parkingapp.model.ParkingSpot;
-import edu.neu.csye6200.parkingapp.model.Rentee;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public class ReviewDTO {
 
-    private Long reviewID;
+    private Long id;
 
     @NotBlank(message = "Description is required")
     @Size(min = 5, max = 100, message = "Description must be between 5 and 100 characters")
-    private String description;
+    private String comment;
 
-    private Rentee rentee;
-    private ParkingSpot parkingSpot;
+    @NotBlank(message = "Rentee ID is required")
+    private Long renteeId;
 
-    public ReviewDTO(Long id, String description, Rentee rentee, ParkingSpot parkingSpot) {
-        this.reviewID = id;
-        this.description = description;
-        this.rentee = rentee;
-        this.parkingSpot = parkingSpot;
+    private String renteeName;
+
+    @NotBlank(message = "Parking Location ID is required")
+    private Long parkingLocationId;
+
+    public ReviewDTO(Long id, String renteeName, String comment, Long renteeId, Long parkingLocationId) {
+        this.id = id;
+        this.renteeName = renteeName;
+        this.comment = comment;
+        this.renteeId = renteeId;
+        this.parkingLocationId = parkingLocationId;
     }
 
     public Long getId() {
-        return reviewID;
+        return id;
     }
 
     public void setId(Long id) {
-        this.reviewID = id;
+        this.id = id;
     }
 
-    public String getDescription() {
-        return description;
+    public String getComment() {
+        return comment;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
-    public Rentee getRentee() {
-        return rentee;
+    public @NotBlank(message = "Rentee ID is required") Long getRenteeId() {
+        return renteeId;
     }
 
-    public void setRentee(Rentee rentee) {
-        this.rentee = rentee;
+    public void setRenteeId(@NotBlank(message = "Rentee ID is required") Long renteeId) {
+        this.renteeId = renteeId;
     }
 
-    public ParkingSpot getParkingSpot() {
-        return parkingSpot;
+    public @NotBlank(message = "Parking Location ID is required") Long getParkingLocationId() {
+        return parkingLocationId;
     }
 
-    public void setParkingSpot(ParkingSpot parkingSpot) {
-        this.parkingSpot = parkingSpot;
+    public void setParkingLocationId(@NotBlank(message = "Parking Location ID is required") Long parkingLocationId) {
+        this.parkingLocationId = parkingLocationId;
+    }
+
+    public String getRenteeName() {
+        return renteeName;
+    }
+
+    public void setRenteeName(String renteeName) {
+        this.renteeName = renteeName;
     }
 }
 
