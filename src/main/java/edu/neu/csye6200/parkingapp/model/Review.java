@@ -6,8 +6,11 @@ import jakarta.persistence.*;
 @Table(name="reviews")
 public class Review extends BaseEntity {
 
-    @Column(name = "description", nullable = false, length = 100)
+    @Column(name = "comment", nullable = false, length = 100)
     private String comment;
+
+    @Column(name = "rating", nullable = false)
+    private double rating;
 
     // Foreign key to Rentee
     @ManyToOne
@@ -41,5 +44,13 @@ public class Review extends BaseEntity {
 
     public void setParkingLocation(ParkingLocation parkingLocation) {
         this.parkingLocation = parkingLocation;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
     }
 }

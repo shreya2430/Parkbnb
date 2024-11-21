@@ -2,8 +2,10 @@ package edu.neu.csye6200.parkingapp.controller;
 
 import edu.neu.csye6200.parkingapp.dto.ParkingLocationDTO;
 import edu.neu.csye6200.parkingapp.dto.ParkingSpotDTO;
+import edu.neu.csye6200.parkingapp.dto.ReviewDTO;
 import edu.neu.csye6200.parkingapp.service.ParkingLocationService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,5 +46,14 @@ public class ParkingLocationController {
     public ResponseEntity<List<ParkingSpotDTO>> getAvailableParkingSpots(@PathVariable Long id) {
         List<ParkingSpotDTO> availableSpots = parkingLocationService.getAvailableSpots(id);
         return ResponseEntity.ok(availableSpots);
+    }
+
+    @GetMapping("/{locationId}/reviews")
+    public ResponseEntity<List<ReviewDTO>> getReviews(@PathVariable Long locationId) {
+        List<ReviewDTO> reviews = parkingLocationService.getReviewsForParkingLocation(locationId);
+        if (reviews.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(reviews);
     }
 }

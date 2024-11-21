@@ -11,6 +11,9 @@ public class ReviewDTO {
     @Size(min = 5, max = 100, message = "Description must be between 5 and 100 characters")
     private String comment;
 
+    @NotBlank(message = "Rating is required")
+    private double rating;
+
     @NotBlank(message = "Rentee ID is required")
     private Long renteeId;
 
@@ -18,14 +21,6 @@ public class ReviewDTO {
 
     @NotBlank(message = "Parking Location ID is required")
     private Long parkingLocationId;
-
-    public ReviewDTO(Long id, String renteeName, String comment, Long renteeId, Long parkingLocationId) {
-        this.id = id;
-        this.renteeName = renteeName;
-        this.comment = comment;
-        this.renteeId = renteeId;
-        this.parkingLocationId = parkingLocationId;
-    }
 
     public Long getId() {
         return id;
@@ -65,6 +60,15 @@ public class ReviewDTO {
 
     public void setRenteeName(String renteeName) {
         this.renteeName = renteeName;
+    }
+
+    @NotBlank(message = "Rating is required")
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(@NotBlank(message = "Rating is required") double rating) {
+        this.rating = rating;
     }
 }
 
