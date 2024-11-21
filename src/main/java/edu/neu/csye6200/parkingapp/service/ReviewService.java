@@ -32,7 +32,14 @@ public class ReviewService {
         Optional<Review> review = reviewRepository.findById(id);
         if (review.isPresent()) {
             Review r = review.get();
-            ReviewDTO reviewDTO = new ReviewDTO(r.getId(), r.getRentee().getFirstName() + " " + r.getRentee().getLastName(), r.getComment(), r.getRentee().getId(), r.getParkingLocation().getId());
+            ReviewDTO reviewDTO = new ReviewDTO();
+            reviewDTO.setId(r.getId());
+            reviewDTO.setComment(r.getComment());
+            reviewDTO.setRating(r.getRating());
+            reviewDTO.setRenteeId(r.getRentee().getId());
+            reviewDTO.setParkingLocationId(r.getParkingLocation().getId());
+            reviewDTO.setRenteeName(r.getRentee().getFirstName() + " " + r.getRentee().getLastName());
+
             return Optional.of(reviewDTO);
         }
         return Optional.empty();
@@ -50,13 +57,22 @@ public class ReviewService {
 
         Review review = new Review();
         review.setComment(reviewDTO.getComment());
+        review.setRating(reviewDTO.getRating());
         review.setRentee(rentee);
         review.setParkingLocation(parkingLocation);
 
         // Save to database
         Review savedReview = reviewRepository.save(review);
 
+        ReviewDTO rDTO = new ReviewDTO();
+        rDTO.setId(savedReview.getId());
+        rDTO.setComment(savedReview.getComment());
+        rDTO.setRating(savedReview.getRating());
+        rDTO.setRenteeId(savedReview.getRentee().getId());
+        rDTO.setParkingLocationId(savedReview.getParkingLocation().getId());
+        rDTO.setRenteeName(savedReview.getRentee().getFirstName() + " " + savedReview.getRentee().getLastName());
+
         // Return the saved entity as DTO
-        return new ReviewDTO(savedReview.getId(), rentee.getFirstName() + " " + rentee.getLastName(), savedReview.getComment(), savedReview.getRentee().getId(), savedReview.getParkingLocation().getId());
+        return rDTO;
     }
 }

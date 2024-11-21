@@ -2,10 +2,13 @@ package edu.neu.csye6200.parkingapp.service;
 
 import edu.neu.csye6200.parkingapp.dto.ParkingLocationDTO;
 import edu.neu.csye6200.parkingapp.dto.ParkingSpotDTO;
+import edu.neu.csye6200.parkingapp.dto.ReviewDTO;
 import edu.neu.csye6200.parkingapp.model.ParkingLocation;
 import edu.neu.csye6200.parkingapp.model.ParkingSpot;
 import edu.neu.csye6200.parkingapp.model.Renter;
+import edu.neu.csye6200.parkingapp.model.Review;
 import edu.neu.csye6200.parkingapp.repository.ParkingSpotRepository;
+import edu.neu.csye6200.parkingapp.repository.ReviewRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +34,10 @@ public class ParkingLocationService {
 
     @Autowired
     private ParkingSpotRepository parkingSpotRepository;
+
+    @Autowired
+    private ReviewRepository reviewRepository;
+
 
     @Value("${upload.dir.parking_locations}")
     private String uploadDirForParkingLocations;
@@ -99,5 +106,23 @@ public class ParkingLocationService {
         }
 
         return parkingSpotDTOList;
+    }
+
+    public List<ReviewDTO> getReviewsForParkingLocation(Long locationId) {
+
+        List<Review> reviews = reviewRepository.findByParkingLocationId(locationId);
+
+        List<ReviewDTO> reviewDTOs = new ArrayList<>();
+        for (Review review : reviews) {
+            ReviewDTO dto = new ReviewDTO();
+            dto.setId(review.getId());
+            dto.setComment(review.getComment());
+            dto.setRating(review.getRating());
+            dto.setRenteeId(review.getRentee().getId()); // Assuming Rentee is a related entity
+            dto.setParkingLocationId(review.getParkingLocation().getId());
+            dto.setRenteeName(review.getRentee().getFirstName() + " " + review.getRentee().getLastName());
+            reviewDTOs.add(dto);
+        }
+        return reviewDTOs;
     }
 }
