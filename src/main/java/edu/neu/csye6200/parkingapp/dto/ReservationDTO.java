@@ -1,12 +1,9 @@
 package edu.neu.csye6200.parkingapp.dto;
-
-import edu.neu.csye6200.parkingapp.model.ParkingSpot;
-import edu.neu.csye6200.parkingapp.model.Payment;
-import edu.neu.csye6200.parkingapp.model.Rentee;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
+
 
 public class ReservationDTO {
     private Long reservationID;
@@ -26,20 +23,26 @@ public class ReservationDTO {
     private String status;
 
     private Boolean isEmailSent;
-    private Rentee rentee;
-    private ParkingSpot parkingSpot;
-    private Payment payment;
 
-    public ReservationDTO(Long reservationID, Timestamp startTime, Timestamp endTime, String confirmationCode, String status, Boolean isEmailSent, Rentee rentee, ParkingSpot parkingSpot, Payment payment) {
+    @NotBlank(message = "Rentee ID is required")
+    private Long renteeId;
+
+    @NotBlank(message = "Parking Spot ID is required")
+    private Long parkingSpotId;
+
+    @NotBlank(message = "Payment ID is required")
+    private Long paymentId;
+
+    public ReservationDTO(Long reservationID, Timestamp startTime, Timestamp endTime, String confirmationCode, String status, Boolean isEmailSent, Long renteeId, Long parkingSpotId, Long paymentId) {
         this.reservationID = reservationID;
         this.startTime = startTime;
         this.endTime = endTime;
         this.confirmationCode = confirmationCode;
         this.status = status;
         this.isEmailSent = isEmailSent;
-        this.rentee = rentee;
-        this.parkingSpot = parkingSpot;
-        this.payment = payment;
+        this.renteeId = renteeId;
+        this.parkingSpotId = parkingSpotId;
+        this.paymentId = paymentId;
     }
 
     public Long getReservationID() {
@@ -50,35 +53,35 @@ public class ReservationDTO {
         this.reservationID = reservationID;
     }
 
-    public Timestamp getStartTime() {
+    public @NotBlank(message = "Start Time is required") Timestamp getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Timestamp startTime) {
+    public void setStartTime(@NotBlank(message = "Start Time is required") Timestamp startTime) {
         this.startTime = startTime;
     }
 
-    public Timestamp getEndTime() {
+    public @NotBlank(message = "End Time is required") Timestamp getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Timestamp endTime) {
+    public void setEndTime(@NotBlank(message = "End Time is required") Timestamp endTime) {
         this.endTime = endTime;
     }
 
-    public String getConfirmationCode() {
+    public @NotBlank(message = "Confirmation code is required") @Size(max = 10, message = "Confirmation code  must be of 10 characters") String getConfirmationCode() {
         return confirmationCode;
     }
 
-    public void setConfirmationCode(String confirmationCode) {
+    public void setConfirmationCode(@NotBlank(message = "Confirmation code is required") @Size(max = 10, message = "Confirmation code  must be of 10 characters") String confirmationCode) {
         this.confirmationCode = confirmationCode;
     }
 
-    public String getStatus() {
+    public @NotBlank(message = "Status is required") @Size(max = 15, message = "Status can have max 15 characters") String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(@NotBlank(message = "Status is required") @Size(max = 15, message = "Status can have max 15 characters") String status) {
         this.status = status;
     }
 
@@ -90,27 +93,27 @@ public class ReservationDTO {
         isEmailSent = emailSent;
     }
 
-    public Rentee getRentee() {
-        return rentee;
+    public @NotBlank(message = "Rentee ID is required") Long getRenteeId() {
+        return renteeId;
     }
 
-    public void setRentee(Rentee rentee) {
-        this.rentee = rentee;
+    public void setRenteeId(@NotBlank(message = "Rentee ID is required") Long renteeId) {
+        this.renteeId = renteeId;
     }
 
-    public ParkingSpot getParkingSpot() {
-        return parkingSpot;
+    public @NotBlank(message = "Parking Spot ID is required") Long getParkingSpotId() {
+        return parkingSpotId;
     }
 
-    public void setParkingSpot(ParkingSpot parkingSpot) {
-        this.parkingSpot = parkingSpot;
+    public void setParkingSpotId(@NotBlank(message = "Parking Spot ID is required") Long parkingSpotId) {
+        this.parkingSpotId = parkingSpotId;
     }
 
-    public Payment getPayment() {
-        return payment;
+    public @NotBlank(message = "Payment ID is required") Long getPaymentId() {
+        return paymentId;
     }
 
-    public void setPayment(Payment payment) {
-        this.payment = payment;
+    public void setPaymentId(@NotBlank(message = "Payment ID is required") Long paymentId) {
+        this.paymentId = paymentId;
     }
 }
