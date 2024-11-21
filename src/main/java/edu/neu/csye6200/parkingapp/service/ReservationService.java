@@ -1,54 +1,63 @@
 package edu.neu.csye6200.parkingapp.service;
 
-import edu.neu.csye6200.parkingapp.model.Reservation;
-import edu.neu.csye6200.parkingapp.repository.ReservationRepository;
+import edu.neu.csye6200.parkingapp.dto.ReservationDTO;
+import edu.neu.csye6200.parkingapp.model.*;
+import edu.neu.csye6200.parkingapp.repository.*;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.List;
+import org.springframework.validation.BindingResult;
+
 import java.util.Optional;
 
 @Service
 public class ReservationService{
 
+    @Autowired
     private  ReservationRepository reservationRepository;
 
     @Autowired
-    public ReservationService(ReservationRepository reservationRepository) {
-        this.reservationRepository = reservationRepository;
+    private RenteeRepository renteeRepository;
+
+    @Autowired
+    private ParkingSpotRepository parkingSpotRepository;
+    @Autowired
+    private PaymentRepository paymentRepository;
+
+    public Optional<ReservationDTO> getReservationById(Long id) {
+        Optional <Reservation> reservation = reservationRepository.findById(id);
+        if (reservation.isPresent()) {
+            Reservation res = reservation.get();
+            ReservationDTO resDTO = new ReservationDTO(res.getId(), res.getStartTime(), res.getEndTime(), res.getConfirmationCode(), res.getStatus(), res.getIsEmailSent(), res.getRentee().getId(), res.getParkingSpot().getId(), res.getPayment().getId());
+            return Optional.of(resDTO);
+        }
+        return Optional.empty();
     }
 
+    public ReservationDTO saveReservation(@Valid ReservationDTO reservationDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            // Handle validation errors
+            throw new RuntimeException("Validation failed: " + bindingResult.getAllErrors());
+        }
 
-    public List<Reservation> getAllReservations() {
-        return reservationRepository.findAll();
-    }
+        Rentee rentee = renteeRepository.getById(reservationDTO.getRenteeId());
+        ParkingSpot parkingSpot = parkingSpotRepository.getById(reservationDTO.getParkingSpotId());
+        Payment payment = paymentRepository.getById(reservationDTO.getPaymentId());
 
+        Reservation res = new Reservation();
+        res.setStartTime(reservationDTO.getStartTime());
+        res.setEndTime(reservationDTO.getEndTime());
+        res.setConfirmationCode(reservationDTO.getConfirmationCode());
+        res.setStatus(reservationDTO.getStatus());
+        res.setIsEmailSent(reservationDTO.getEmailSent());
+        res.setRentee(rentee);
+        res.setParkingSpot(parkingSpot);
+        res.setPayment(payment);
 
-    public Optional<Reservation> getReservationById(Long id) {
-        return reservationRepository.findById(id);
-    }
+        // Save to database
+        Reservation savedReservation = reservationRepository.save(res);
 
-
-    public Reservation createReservation(Reservation reservation) {
-        return reservationRepository.save(reservation);
-    }
-
-
-    public Reservation updateReservation(Long id, Reservation reservationDetails) {
-        return reservationRepository.findById(id).map(reservation -> {
-            reservation.setStartTime(reservationDetails.getStartTime());
-            reservation.setEndTime(reservationDetails.getEndTime());
-            reservation.setConfirmationCode(reservationDetails.getConfirmationCode());
-            reservation.setStatus(reservationDetails.getStatus());
-            reservation.setIsEmailSent(reservationDetails.getIsEmailSent());
-            reservation.setRentee(reservationDetails.getRentee());
-            reservation.setParkingSpot(reservationDetails.getParkingSpot());
-            reservation.setPayment(reservationDetails.getPayment());
-            return reservationRepository.save(reservation);
-        }).orElseThrow(() -> new RuntimeException("Reservation not found with id " + id));
-    }
-
-
-    public void deleteReservation(Long id) {
-        reservationRepository.deleteById(id);
+        // Return the saved entity as DTO
+        return new ReservationDTO(savedReservation.getId(), savedReservation.getStartTime(), savedReservation.getEndTime(), savedReservation.getConfirmationCode(), savedReservation.getStatus(), savedReservation.getIsEmailSent(), savedReservation.getRentee().getId(), savedReservation.getParkingSpot().getId(), savedReservation.getPayment().getId());
     }
 }
