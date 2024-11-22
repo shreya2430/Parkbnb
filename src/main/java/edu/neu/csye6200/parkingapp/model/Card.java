@@ -3,8 +3,6 @@ package edu.neu.csye6200.parkingapp.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
-
 @Entity
 @Data
 @Table(name = "cards")
@@ -20,7 +18,9 @@ public class Card extends BaseEntity {
     private String stripeCardId; // ID provided by Stripe for saved card
 
     @Column(nullable = false)
-    private LocalDate expiryDate; // Expiry date of the card
+    private String expiryDate; // Expiry date of the card
+
+    private String cardHolderName;
 
     @ManyToOne
     @JoinColumn(name = "rentee_id", nullable = false)

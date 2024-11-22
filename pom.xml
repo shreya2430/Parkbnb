@@ -62,6 +62,12 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+<!--Stripe for payment-->
+        <dependency>
+            <groupId>com.stripe</groupId>
+            <artifactId>stripe-java</artifactId>
+            <version>28.0.1</version>
+        </dependency>
     </dependencies>
 
     <build>

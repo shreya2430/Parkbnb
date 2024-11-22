@@ -26,6 +26,7 @@ public class CardService {
         card.setCardType(cardDTO.getCardType());
         card.setStripeCardId(cardDTO.getStripeCardId());
         card.setExpiryDate(cardDTO.getExpiryDate());
+        card.setCardHolderName(cardDTO.getCardHolderName());
 
         //retireve rentee from the database
         Rentee rentee = renteeRepository.findById(cardDTO.getRenteeId())
@@ -52,6 +53,20 @@ public class CardService {
         cardDTO.setStripeCardId(card.getStripeCardId());
         cardDTO.setExpiryDate(card.getExpiryDate());
         cardDTO.setRenteeId(card.getRentee().getId());
+        cardDTO.setCardHolderName(card.getCardHolderName());
         return cardDTO;
+    }
+    public Card mapToCardEntity(CardDTO cardDTO) {
+        Card card = new Card();
+        card.setLast4(cardDTO.getLast4());
+        card.setCardType(cardDTO.getCardType());
+        card.setStripeCardId(cardDTO.getStripeCardId());
+        card.setExpiryDate(cardDTO.getExpiryDate());
+
+        Rentee rentee = renteeRepository.findById(cardDTO.getRenteeId())
+                .orElseThrow(() -> new IllegalArgumentException("Rentee not found"));
+        card.setRentee(rentee);
+
+        return card;
     }
 }
