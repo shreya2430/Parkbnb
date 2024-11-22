@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import java.time.LocalDate;
 
 @Data
 public class CardDTO {
@@ -22,8 +21,10 @@ public class CardDTO {
     private String stripeCardId; // Stripe's unique ID for the card
 
     @NotNull(message = "Expiry date is required")
-    private LocalDate expiryDate;
+    private String expiryDate;
 
     @NotNull(message = "Rentee ID is required")
     private Long renteeId; // Reference to the Rentee entity
+
+    private String cardHolderName;
 }

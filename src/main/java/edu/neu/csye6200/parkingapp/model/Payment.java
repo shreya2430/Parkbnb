@@ -18,6 +18,9 @@ public class Payment extends BaseEntity {
     @Column(nullable = false)
     private String stripePaymentId;
 
+    @Column
+    private String paymentMethodId;
+
     @ManyToOne // Many payments to one card
     @JoinColumn(name = "card_id", nullable = false)
     private Card card;

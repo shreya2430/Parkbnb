@@ -1,6 +1,6 @@
 package edu.neu.csye6200.parkingapp.controller;
 
-
+import com.stripe.exception.StripeException;
 import edu.neu.csye6200.parkingapp.dto.PaymentDTO;
 import edu.neu.csye6200.parkingapp.service.PaymentService;
 import jakarta.validation.Valid;
@@ -18,15 +18,43 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
 
-    @PostMapping
-    public ResponseEntity<PaymentDTO> createPayment(@Valid @RequestBody PaymentDTO paymentDTO) {
-        PaymentDTO createdPayment = paymentService.createPayment(paymentDTO);
-        return new ResponseEntity<>(createdPayment, HttpStatus.CREATED);
+    /**
+     * Endpoint to create a payment.
+     *
+     * @param paymentDTO the payment details
+     * @return ResponseEntity with PaymentDTO and HTTP status
+     */
+    @PostMapping("/create")
+    public ResponseEntity<?> createPayment(@RequestBody @Valid PaymentDTO paymentDTO) {
+        try {
+            String paymentIntentId = paymentService.createPayment(paymentDTO);
+            return new ResponseEntity<>(paymentIntentId, HttpStatus.CREATED);
+        } catch (StripeException e) {
+            System.out.println("Stripe error: " + e.getMessage());
+            return new ResponseEntity<>("Stripe error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
+    /**
+     * Endpoint to retrieve a payment by ID.
+     *
+     * @param id the Payment ID
+     * @return ResponseEntity with PaymentDTO or 404 status
+     */
     @GetMapping("/{id}")
-    public ResponseEntity<PaymentDTO> getPaymentById(@PathVariable Long id) {
-        Optional<PaymentDTO> payment = paymentService.getPaymentById(id);
-        return payment.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> getPaymentById(@PathVariable Long id) {
+        try {
+            Optional<PaymentDTO> payment = paymentService.getPaymentById(id);
+            return payment.map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
