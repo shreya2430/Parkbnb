@@ -9,6 +9,7 @@ import edu.neu.csye6200.parkingapp.model.Renter;
 import edu.neu.csye6200.parkingapp.model.Review;
 import edu.neu.csye6200.parkingapp.repository.ParkingSpotRepository;
 import edu.neu.csye6200.parkingapp.repository.ReviewRepository;
+import edu.neu.csye6200.parkingapp.service.thirdparty.GeocodingService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +17,11 @@ import org.springframework.stereotype.Service;
 import edu.neu.csye6200.parkingapp.repository.ParkingLocationRepository;
 import edu.neu.csye6200.parkingapp.repository.RenterRepository;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
+import java.nio.file.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -55,7 +60,7 @@ public class ParkingLocationService {
         return Optional.empty();
     }
 
-    public ParkingLocationDTO saveParkingLocation(@Valid ParkingLocationDTO parkingLocationDTO, BindingResult bindingResult) {
+    public ParkingLocationDTO saveParkingLocation(MultipartFile file, @Valid ParkingLocationDTO parkingLocationDTO, BindingResult bindingResult) throws IOException {
         if (bindingResult.hasErrors()) {
             // Handle validation errors
             throw new RuntimeException("Validation failed: " + bindingResult.getAllErrors());
@@ -69,12 +74,9 @@ public class ParkingLocationService {
         parkingLocation.setState(parkingLocationDTO.getState());
         parkingLocation.setCountry(parkingLocationDTO.getCountry());
 
-        // Set renter if renterId is provided
-        if (parkingLocationDTO.getId() != null) {
-             Renter r = renterRepository.findById(parkingLocationDTO.getRenterId())
-                     .orElseThrow(() -> new RuntimeException("Renter not found with ID: " + parkingLocationDTO.getRenterId()));
-            parkingLocation.setRenter(r);
-        }
+        Renter r = renterRepository.findById(parkingLocationDTO.getRenterId())
+                 .orElseThrow(() -> new RuntimeException("Renter not found with ID: " + parkingLocationDTO.getRenterId()));
+        parkingLocation.setRenter(r);
 
         // Get latitude and longitude using Geocoding Service
         geocodingService.getCoordinates(parkingLocation);
@@ -83,6 +85,8 @@ public class ParkingLocationService {
         ParkingLocation saveParkingLocation = parkingLocationRepository.save(parkingLocation);
 
         String imagePath = uploadDirForParkingLocations + saveParkingLocation.getImageFileName();
+
+        uploadParkingLocationImage(saveParkingLocation.getImageFileName(), file);
 
         // Return the saved entity as DTO
         return new ParkingLocationDTO(saveParkingLocation.getId(),saveParkingLocation.getStreet(),saveParkingLocation.getCity(),saveParkingLocation.getPostalcode(),saveParkingLocation.getState(),saveParkingLocation.getCountry(),saveParkingLocation.getLatitude(),saveParkingLocation.getLongitude(), imagePath, saveParkingLocation.getRenter().getId());
@@ -118,11 +122,31 @@ public class ParkingLocationService {
             dto.setId(review.getId());
             dto.setComment(review.getComment());
             dto.setRating(review.getRating());
-            dto.setRenteeId(review.getRentee().getId()); // Assuming Rentee is a related entity
+            dto.setRenteeId(review.getRentee().getId());
             dto.setParkingLocationId(review.getParkingLocation().getId());
             dto.setRenteeName(review.getRentee().getFirstName() + " " + review.getRentee().getLastName());
             reviewDTOs.add(dto);
         }
         return reviewDTOs;
+    }
+
+    private void uploadParkingLocationImage(String imageFileName, MultipartFile file) throws IOException {
+        // Get the absolute path of the upload directory
+        Path uploadPath = Paths.get(uploadDirForParkingLocations).toAbsolutePath();
+
+        // Ensure the directory exists or create it
+        File directory = uploadPath.toFile();
+        if (!directory.exists()) {
+            boolean dirsCreated = directory.mkdirs();
+            if (!dirsCreated) {
+                throw new IOException("Failed to create directory: " + uploadPath);
+            }
+        }
+
+        // Combine the directory path with the file name to get the full file path
+        File targetFile = uploadPath.resolve(imageFileName).toFile();
+
+        // Transfer the uploaded file to the target location
+        file.transferTo(targetFile);
     }
 }
