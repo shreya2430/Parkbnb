@@ -1,4 +1,4 @@
-package edu.neu.csye6200.parkingapp.service;
+package edu.neu.csye6200.parkingapp.service.thirdparty;
 import edu.neu.csye6200.parkingapp.model.ParkingLocation;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;

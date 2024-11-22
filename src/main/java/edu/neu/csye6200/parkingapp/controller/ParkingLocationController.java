@@ -1,11 +1,13 @@
 package edu.neu.csye6200.parkingapp.controller;
 
+import edu.neu.csye6200.parkingapp.dto.ApiResponse;
 import edu.neu.csye6200.parkingapp.dto.ParkingLocationDTO;
 import edu.neu.csye6200.parkingapp.dto.ParkingSpotDTO;
 import edu.neu.csye6200.parkingapp.dto.ReviewDTO;
 import edu.neu.csye6200.parkingapp.service.ParkingLocationService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+import java.io.IOException;
 
 @RestController
-@RequestMapping("api/parkinglocation")
+@RequestMapping("/api/parkinglocation")
 public class ParkingLocationController {
 
     @Autowired
@@ -31,15 +34,28 @@ public class ParkingLocationController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<ParkingLocationDTO> createParkingLocation(@Valid @RequestBody ParkingLocationDTO parkingLocationDTO, BindingResult bindingResult) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<ParkingLocationDTO>> createParkingLocation(
+            @Valid @ModelAttribute ParkingLocationDTO parkingLocationDTO,
+            BindingResult bindingResult) {
+
         if (bindingResult.hasErrors()) {
-            // Handle validation errors
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body(new ApiResponse<>(false, "Validation failed"));
         }
 
-        ParkingLocationDTO savedParkingLocation = parkingLocationService.saveParkingLocation(parkingLocationDTO, bindingResult);
-        return ResponseEntity.ok(savedParkingLocation);
+        try {
+            ParkingLocationDTO savedParkingLocation = parkingLocationService.saveParkingLocation(
+                    parkingLocationDTO.getUploadImage(),
+                    parkingLocationDTO,
+                    bindingResult
+            );
+            return ResponseEntity.ok(new ApiResponse<>(true, savedParkingLocation));
+
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body(new ApiResponse<>(false, "Error uploading file: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ApiResponse<>(false, "An unexpected error occurred: " + e.getMessage()));
+        }
     }
 
     @GetMapping("/{id}/available-spots")

@@ -2,9 +2,10 @@ package edu.neu.csye6200.parkingapp.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.springframework.web.multipart.MultipartFile;
 
 public class ParkingLocationDTO {
-    private long id;
+    private Long id;
 
     @NotBlank(message = "Street name is required")
     @Size(min = 5, max = 20, message = "Street name must be between 5 and 20 characters")
@@ -29,12 +30,13 @@ public class ParkingLocationDTO {
     private String latitude;
     private String longitude;
 
-    @NotBlank(message = "Parking Location Image is required")
-    private  String parkingLocationImage;
+    private MultipartFile uploadImage;
+
+    private String parkingLocationImage;
 
     private Long renterId;
 
-    public ParkingLocationDTO(long id, String street, String city, String state, String postalcode, String country, String latitude, String longitude, String parkingLocationImage, Long renterId) {
+    public ParkingLocationDTO(Long id, String street, String city, String state, String postalcode, String country, String latitude, String longitude, String parkingLocationImage, Long renterId) {
         this.id = id;
         this.street = street;
         this.city = city;
@@ -80,4 +82,12 @@ public class ParkingLocationDTO {
 
     public Long getRenterId() {return renterId; }
     public void setRenterId(Long renterId) {this.renterId = renterId; }
+
+    public MultipartFile getUploadImage() {
+        return uploadImage;
+    }
+
+    public void setUploadImage(MultipartFile uploadImage) {
+        this.uploadImage = uploadImage;
+    }
 }
