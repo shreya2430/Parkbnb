@@ -22,6 +22,8 @@ public class Card extends BaseEntity {
 
     private String cardHolderName;
 
+    private String stripeCustomerId;
+
     @ManyToOne
     @JoinColumn(name = "rentee_id", nullable = false)
     private Rentee rentee;
