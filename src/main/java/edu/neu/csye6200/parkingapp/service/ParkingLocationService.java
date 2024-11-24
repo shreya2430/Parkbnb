@@ -60,6 +60,41 @@ public class ParkingLocationService {
         return Optional.empty();
     }
 
+    public List<ParkingLocationDTO> searchByQuery(String query) {
+        List<ParkingLocation> locations = parkingLocationRepository.findByCityContainingIgnoreCaseOrStreetContainingIgnoreCase(
+                query, query);
+
+        return mapToDTOs(locations);
+    }
+
+    public List<ParkingLocation> findNearbyLocations(Double latitude, Double longitude, double radius) {
+        return parkingLocationRepository.findNearbyLocations(latitude, longitude, radius);
+    }
+    public List<ParkingLocationDTO> searchByCoordinates(Double latitude, Double longitude, double radius) {
+        List<ParkingLocation> locations = parkingLocationRepository.findNearbyLocations(latitude, longitude, radius);
+        return mapToDTOs(locations);
+    }
+
+    private List<ParkingLocationDTO> mapToDTOs(List<ParkingLocation> locations) {
+        List<ParkingLocationDTO> dtos = new ArrayList<>();
+        for (ParkingLocation location : locations) {
+            dtos.add(new ParkingLocationDTO(
+                    location.getId(),
+                    location.getStreet(),
+                    location.getCity(),
+                    location.getPostalcode(),
+                    location.getState(),
+                    location.getCountry(),
+                    location.getLatitude(),
+                    location.getLongitude(),
+                    uploadDirForParkingLocations + location.getImageFileName(),
+                    location.getRenter().getId()
+            ));
+        }
+        return dtos;
+    }
+
+
     public ParkingLocationDTO saveParkingLocation(MultipartFile file, @Valid ParkingLocationDTO parkingLocationDTO, BindingResult bindingResult) throws IOException {
         if (bindingResult.hasErrors()) {
             // Handle validation errors
