@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
+import edu.neu.csye6200.parkingapp.model.ParkingLocation;
 
 import java.io.IOException;
 
@@ -32,6 +33,48 @@ public class ParkingLocationController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/nearby")
+    public ResponseEntity<List<ParkingLocation>> getNearbyParkingLocations(
+            @RequestParam Double latitude,
+            @RequestParam Double longitude,
+            @RequestParam Double radius) {
+        try {
+            List<ParkingLocation> nearbyLocations = parkingLocationService.findNearbyLocations(latitude, longitude, radius);
+            return ResponseEntity.ok(nearbyLocations);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
+    // Search for parking locations based on user input or coordinates
+    @GetMapping("/search")
+    public ResponseEntity<List<ParkingLocationDTO>> searchParkingLocations(
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "latitude", required = false) Double latitude,
+            @RequestParam(value = "longitude", required = false) Double longitude,
+            @RequestParam(value = "radius", defaultValue = "5") double radius) {
+
+        List<ParkingLocationDTO> parkingLocations;
+
+        if (query != null && !query.isEmpty()) {
+            // Search based on user input
+            parkingLocations = parkingLocationService.searchByQuery(query);
+        } else if (latitude != null && longitude != null) {
+            // Search based on coordinates
+            parkingLocations = parkingLocationService.searchByCoordinates(latitude, longitude, radius);
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+
+        if (parkingLocations.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(parkingLocations);
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
