@@ -2,7 +2,10 @@ package edu.neu.csye6200.parkingapp.service;
 
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Customer;
 import com.stripe.model.PaymentIntent;
+import com.stripe.model.PaymentMethod;
+import com.stripe.param.PaymentMethodAttachParams;
 import edu.neu.csye6200.parkingapp.config.StripeConfig;
 import edu.neu.csye6200.parkingapp.dto.PaymentDTO;
 import edu.neu.csye6200.parkingapp.model.Card;
@@ -40,48 +43,50 @@ public class PaymentService {
     /**
      * Create a PaymentIntent and save payment details.
      */
-
     public String createPayment(PaymentDTO paymentDTO) throws StripeException {
-        // Validate and fetch related entities
+        // Set Stripe API key
         Stripe.apiKey = stripeConfig.getSecretKey();
+
+        // Fetch Card and Rentee entities
         Card card = cardRepository.findById(paymentDTO.getCardId())
-                     .orElseThrow(() -> new IllegalArgumentException("Card not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Card not found"));
 
         Rentee rentee = renteeRepository.findById(paymentDTO.getRenteeId())
                 .orElseThrow(() -> new IllegalArgumentException("Rentee not found"));
+
+        // Check or create a Stripe Customer
+        String stripeCustomerId = card.getStripeCustomerId();
+        if (stripeCustomerId == null) {
+            // Create a new Stripe Customer
+            Map<String, Object> customerParams = new HashMap<>();
+            customerParams.put("name", card.getCardHolderName());
+            Customer customer = Customer.create(customerParams);
+            stripeCustomerId = customer.getId();
+
+            // Save the Customer ID to the card
+            card.setStripeCustomerId(stripeCustomerId);
+            cardRepository.save(card); // Save the updated card entity
+        }
+
+        // Attach PaymentMethod to Customer if not already attached
+        PaymentMethod paymentMethod = PaymentMethod.retrieve(card.getStripeCardId());
+        paymentMethod.attach(PaymentMethodAttachParams.builder()
+                .setCustomer(stripeCustomerId)
+                .build());
 
         // Create Stripe PaymentIntent
         Map<String, Object> params = new HashMap<>();
         params.put("amount", convertToCents(paymentDTO.getAmount()));
         params.put("currency", "usd");
-        params.put("automatic_payment_methods[enabled]",true);
-        params.put("automatic_payment_methods[allow_redirects]","never");
-
+        params.put("customer", stripeCustomerId);
         params.put("payment_method", card.getStripeCardId());
-
-//        CustomerCreateParams customerParams =
-//                CustomerCreateParams.builder()
-//                        .setName(card.getCardHolderName())
-//                        .build();
-//        Customer customer = Customer.create(customerParams);
-//        PaymentMethod paymentMethod = PaymentMethod.retrieve(card.getStripeCardId());
-//
-//        paymentMethod.attach(createAttachParams(customer.getId()));
-//        params.put("customer",customer.getId());
-//        params.put("setup_future_usage","off_session");
-
+        params.put("off_session", true);
+        params.put("confirm", true);
 
         PaymentIntent intent = PaymentIntent.create(params);
 
         savePayment(paymentDTO, card, rentee, intent);
-        confirmPayment(card.getStripeCardId(), intent.getId());
         return intent.getId();
-    }
-
-    private Map<String, Object> createAttachParams(String customerId) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("customer", customerId);
-        return params;
     }
 
     private long convertToCents(BigDecimal amount) {
@@ -91,7 +96,7 @@ public class PaymentService {
     private void savePayment(PaymentDTO paymentDTO, Card card, Rentee rentee, PaymentIntent intent) {
         Payment payment = new Payment();
         payment.setAmount(paymentDTO.getAmount());
-        payment.setPaymentStatus("PENDING");
+        payment.setPaymentStatus("COMPLETED");
         payment.setStripePaymentId(intent.getId());
         payment.setCard(card);
         payment.setRentee(rentee);
@@ -99,38 +104,6 @@ public class PaymentService {
         payment.setCreatedAt(LocalDateTime.now());
         payment.setUpdatedAt(LocalDateTime.now());
         paymentRepository.save(payment);
-    }
-
-    /**
-     * Confirm the payment after Stripe processes it.
-     */
-    private void confirmPayment(String stripePaymentId , String intentId) throws StripeException {
-        // Validate PaymentMethodId
-
-        // Retrieve the PaymentIntent from Stripe
-        PaymentIntent intent = PaymentIntent.retrieve(intentId);
-
-        // Confirm the PaymentIntent with the PaymentMethod
-        Map<String, Object> confirmParams = new HashMap<>();
-        confirmParams.put("confirm", true);
-
-       intent = intent.confirm();
-
-        // Handle the PaymentIntent status
-        if ("succeeded".equals(intent.getStatus())) {
-            Payment payment = paymentRepository.findByStripePaymentId(intentId);
-            if(payment == null){
-                throw new IllegalStateException("Payment not found");
-            }
-            payment.setPaymentStatus("COMPLETED");
-            payment.setUpdatedAt(LocalDateTime.now());
-            paymentRepository.save(payment);
-            System.out.println("Payment successfully confirmed!");
-        } else if ("requires_action".equals(intent.getStatus())) {
-            throw new IllegalStateException("Payment requires additional authentication.");
-        } else {
-            throw new IllegalStateException("Payment confirmation failed with status: " + intent.getStatus());
-        }
     }
 
     public Optional<PaymentDTO> getPaymentById(Long paymentId) {
