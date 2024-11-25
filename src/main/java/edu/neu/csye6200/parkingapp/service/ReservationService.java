@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ReservationService{
@@ -28,10 +30,35 @@ public class ReservationService{
         Optional <Reservation> reservation = reservationRepository.findById(id);
         if (reservation.isPresent()) {
             Reservation res = reservation.get();
-            ReservationDTO resDTO = new ReservationDTO(res.getId(), res.getStartTime(), res.getEndTime(), res.getConfirmationCode(), res.getStatus(), res.getIsEmailSent(), res.getRentee().getId(), res.getParkingSpot().getId(), res.getPayment().getId());
-            return Optional.of(resDTO);
+            ReservationDTO dto = new ReservationDTO();
+            dto.setId(res.getId());
+            dto.setRenteeId(res.getRentee().getId());
+            dto.setParkingSpotId(res.getParkingSpot().getId());
+            dto.setStartTime(res.getStartTime());
+            dto.setEndTime(res.getEndTime());
+            dto.setConfirmationCode(res.getConfirmationCode());
+            dto.setStatus(res.getStatus());
+            dto.setPaymentId(res.getPayment().getId());
+            return Optional.of(dto);
         }
         return Optional.empty();
+    }
+
+    public List<ReservationDTO> getReservationsByRenteeId(Long renteeId) {
+        List<Reservation> reservations = reservationRepository.findByRenteeId(renteeId);
+
+        return reservations.stream().map(reservation -> {
+            ReservationDTO dto = new ReservationDTO();
+            dto.setId(reservation.getId());
+            dto.setRenteeId(reservation.getRentee().getId());
+            dto.setParkingSpotId(reservation.getParkingSpot().getId());
+            dto.setStartTime(reservation.getStartTime());
+            dto.setEndTime(reservation.getEndTime());
+            dto.setConfirmationCode(reservation.getConfirmationCode());
+            dto.setStatus(reservation.getStatus());
+            dto.setPaymentId(reservation.getPayment().getId());
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     public ReservationDTO saveReservation(@Valid ReservationDTO reservationDTO, BindingResult bindingResult) {
@@ -57,7 +84,15 @@ public class ReservationService{
         // Save to database
         Reservation savedReservation = reservationRepository.save(res);
 
-        // Return the saved entity as DTO
-        return new ReservationDTO(savedReservation.getId(), savedReservation.getStartTime(), savedReservation.getEndTime(), savedReservation.getConfirmationCode(), savedReservation.getStatus(), savedReservation.getIsEmailSent(), savedReservation.getRentee().getId(), savedReservation.getParkingSpot().getId(), savedReservation.getPayment().getId());
+        ReservationDTO dto = new ReservationDTO();
+        dto.setId(savedReservation.getId());
+        dto.setRenteeId(savedReservation.getRentee().getId());
+        dto.setParkingSpotId(savedReservation.getParkingSpot().getId());
+        dto.setStartTime(savedReservation.getStartTime());
+        dto.setEndTime(savedReservation.getEndTime());
+        dto.setConfirmationCode(savedReservation.getConfirmationCode());
+        dto.setStatus(savedReservation.getStatus());
+        dto.setPaymentId(savedReservation.getPayment().getId());
+        return dto;
     }
 }
