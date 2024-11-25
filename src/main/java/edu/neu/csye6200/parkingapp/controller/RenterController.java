@@ -52,6 +52,7 @@ public class RenterController {
 
                 // Create a response with user email and token
                 Map<String, Object> response = new HashMap<>();
+                response.put("id", user.getId());
                 response.put("email", user.getEmail());
                 response.put("token", token);
 
