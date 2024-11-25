@@ -28,6 +28,15 @@ public class ReservationController {
         }
     }
 
+    @GetMapping("/rentee/{renteeId}")
+    public ResponseEntity<List<ReservationDTO>> getReservationsByRenteeId(@PathVariable Long renteeId) {
+        List<ReservationDTO> reservations = reservationService.getReservationsByRenteeId(renteeId);
+        if (reservations.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(reservations);
+    }
+
     @PostMapping
     public ResponseEntity<ReservationDTO> createReservation(@Valid @RequestBody ReservationDTO reservationDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
