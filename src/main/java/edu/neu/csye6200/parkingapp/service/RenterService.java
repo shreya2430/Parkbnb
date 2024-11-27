@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import edu.neu.csye6200.parkingapp.repository.RenterRepository;
 import org.springframework.validation.BindingResult;
-
+import org.mindrot.jbcrypt.BCrypt;
 import java.util.Optional;
 
 @Service
@@ -27,8 +27,18 @@ public class RenterService {
     }
 
     public Optional<RenterDTO> findUserByEmailAndPassword(String email, String password) {
-        return renterRepository.findByEmailAndPassword(email, password);
+        Optional<Renter> renter = renterRepository.findByEmail(email);
+        if (renter.isPresent()) {
+            Renter existingRenter = renter.get();
+            if (BCrypt.checkpw(password, existingRenter.getPassword())) {
+                // Password matches, return the user as DTO
+                RenterDTO renterDTO = new RenterDTO(existingRenter.getId(), existingRenter.getFirstName(), existingRenter.getLastName(), existingRenter.getPassword(), existingRenter.getEmail(), existingRenter.getPhone());
+                return Optional.of(renterDTO);
+            }
+        }
+        return Optional.empty();  // Invalid login credentials
     }
+
 
     public RenterDTO saveRenter(@Valid RenterDTO renterDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

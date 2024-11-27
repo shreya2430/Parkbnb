@@ -3,8 +3,10 @@ package edu.neu.csye6200.parkingapp.service;
 import edu.neu.csye6200.parkingapp.dto.RenteeDTO;
 import edu.neu.csye6200.parkingapp.dto.RenterDTO;
 import edu.neu.csye6200.parkingapp.model.Rentee;
+import edu.neu.csye6200.parkingapp.model.Renter;
 import edu.neu.csye6200.parkingapp.repository.RenteeRepository;
 import jakarta.validation.Valid;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
@@ -28,7 +30,16 @@ public class RenteeService {
     }
 
     public Optional<RenteeDTO> findUserByEmailAndPassword(String email, String password) {
-        return renteeRepository.findByEmailAndPassword(email, password);
+        Optional<Rentee> rentee = renteeRepository.findByEmail(email);
+        if (rentee.isPresent()) {
+            Rentee existingRentee = rentee.get();
+            if (BCrypt.checkpw(password, existingRentee.getPassword())) {
+                // Password matches, return the user as DTO
+                RenteeDTO renteeDTO = new RenteeDTO(existingRentee.getId(), existingRentee.getFirstName(), existingRentee.getLastName(), existingRentee.getPassword(), existingRentee.getEmail(), existingRentee.getPhone());
+                return Optional.of(renteeDTO);
+            }
+        }
+        return Optional.empty();  // Invalid login credentials
     }
 
     public RenteeDTO saveRentee(@Valid RenteeDTO renteeDTO, BindingResult bindingResult) {
