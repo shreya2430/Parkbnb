@@ -11,6 +11,7 @@ import edu.neu.csye6200.parkingapp.repository.ParkingLocationRepository;
 import edu.neu.csye6200.parkingapp.repository.ParkingSpotRepository;
 import org.springframework.validation.BindingResult;
 
+import java.util.List;
 import java.util.Optional;
 @Service
 public class ParkingSpotService {
@@ -20,6 +21,18 @@ public class ParkingSpotService {
     @Autowired
     private ParkingSpotRepository parkingSpotRepository;
 
+
+    public List<ParkingSpot> getParkingSpotsByLocation(Long locationId) {
+        return parkingSpotRepository.findByParkingLocationId(locationId);
+    }
+
+    public ParkingSpot saveOrUpdateParkingSpot(ParkingSpot parkingSpot) {
+        return parkingSpotRepository.save(parkingSpot);
+    }
+
+    public void deleteParkingSpot(Long id) {
+        parkingSpotRepository.deleteById(id);
+    }
 
     public Optional<ParkingSpotDTO> getParkingSpotById(Long id) {
         Optional<ParkingSpot> parkingSpot = parkingSpotRepository.findById(id);

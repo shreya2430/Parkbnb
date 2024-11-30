@@ -47,6 +47,20 @@ public class ParkingLocationService {
     @Value("${upload.dir.parking_locations}")
     private String uploadDirForParkingLocations;
 
+    public List<ParkingLocation> getParkingLocationsByRenter(Long renterId) {
+        return parkingLocationRepository.findByRenterId(renterId);
+    }
+
+    public ParkingLocation saveOrUpdateParkingLocation(ParkingLocation parkingLocation) {
+        return parkingLocationRepository.save(parkingLocation);
+    }
+
+    public void deleteParkingLocation(Long id) {
+        ParkingLocation location = parkingLocationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Parking Location not found"));
+        parkingLocationRepository.delete(location);
+    }
+
 
     public Optional<ParkingLocationDTO> getParkingLocationById(Long id) {
         Optional<ParkingLocation> parkingLocation = parkingLocationRepository.findById(id);
@@ -59,6 +73,7 @@ public class ParkingLocationService {
         }
         return Optional.empty();
     }
+
 
     public List<ParkingLocationDTO> searchByQuery(String query) {
         List<ParkingLocation> locations = parkingLocationRepository.findByCityContainingIgnoreCaseOrStreetContainingIgnoreCase(

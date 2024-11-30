@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface ParkingSpotRepository extends JpaRepository<ParkingSpot,Long>
 {
+    List<ParkingSpot> findByParkingLocationId(Long locationId);
     List<ParkingSpot> findByParkingLocationIdAndIsAvailable(Long locationId, boolean isAvailable);
 }
