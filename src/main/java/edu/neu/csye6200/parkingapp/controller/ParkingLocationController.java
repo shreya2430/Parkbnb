@@ -25,6 +25,25 @@ public class ParkingLocationController {
     @Autowired
     private ParkingLocationService parkingLocationService;
 
+    // Fetch parking locations by renter ID
+    @GetMapping("/renter/{renterId}")
+    public List<ParkingLocation> getParkingLocationsByRenter(@PathVariable Long renterId) {
+        return parkingLocationService.getParkingLocationsByRenter(renterId);
+    }
+
+    // Save or update parking location
+    @PutMapping("/{id}")
+    public ParkingLocation saveOrUpdateParkingLocation(@RequestBody ParkingLocation parkingLocation) {
+        return parkingLocationService.saveOrUpdateParkingLocation(parkingLocation);
+    }
+
+    // Delete parking location by ID
+    @DeleteMapping("/{id}")
+    public void deleteParkingLocation(@PathVariable Long id) {
+        parkingLocationService.deleteParkingLocation(id);
+    }
+
+
     @GetMapping("/{id}")
     public ResponseEntity<ParkingLocationDTO> getParkingLocation(@PathVariable Long id) {
         Optional<ParkingLocationDTO> parkingLocationDTO = parkingLocationService.getParkingLocationById(id);
@@ -100,6 +119,7 @@ public class ParkingLocationController {
             return ResponseEntity.status(500).body(new ApiResponse<>(false, "An unexpected error occurred: " + e.getMessage()));
         }
     }
+
 
     @GetMapping("/{id}/available-spots")
     public ResponseEntity<List<ParkingSpotDTO>> getAvailableParkingSpots(@PathVariable Long id) {

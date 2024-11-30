@@ -9,6 +9,8 @@ import java.util.List;
 @Repository
 public interface ParkingLocationRepository extends JpaRepository<ParkingLocation, Long>{
 
+    List<ParkingLocation> findByRenterId(Long renterId);
+
     List<ParkingLocation> findByCityContainingIgnoreCaseOrStreetContainingIgnoreCase(String city, String street);
 
     @Query(value = "SELECT * FROM parkinglocation WHERE " +

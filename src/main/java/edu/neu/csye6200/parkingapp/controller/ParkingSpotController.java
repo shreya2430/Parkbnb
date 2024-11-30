@@ -2,6 +2,7 @@ package edu.neu.csye6200.parkingapp.controller;
 
 
 import edu.neu.csye6200.parkingapp.dto.ParkingSpotDTO;
+import edu.neu.csye6200.parkingapp.model.ParkingSpot;
 import edu.neu.csye6200.parkingapp.service.ParkingSpotService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 @RestController
 @RequestMapping("api/parkingspot")
@@ -18,6 +20,25 @@ public class ParkingSpotController {
     @Autowired
     private ParkingSpotService parkingSpotService;
 
+
+
+    // Fetch parking spots by parking location ID
+    @GetMapping("/location/{locationId}")
+    public List<ParkingSpot> getParkingSpotsByLocation(@PathVariable Long locationId) {
+        return parkingSpotService.getParkingSpotsByLocation(locationId);
+    }
+
+    // Save or update parking spot
+    @PutMapping("/{id}")
+    public ParkingSpot saveOrUpdateParkingSpot(@RequestBody ParkingSpot parkingSpot) {
+        return parkingSpotService.saveOrUpdateParkingSpot(parkingSpot);
+    }
+
+    // Delete parking spot by ID
+    @DeleteMapping("/{id}")
+    public void deleteParkingSpot(@PathVariable Long id) {
+        parkingSpotService.deleteParkingSpot(id);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ParkingSpotDTO> getParkingSpot(@PathVariable Long id) {
