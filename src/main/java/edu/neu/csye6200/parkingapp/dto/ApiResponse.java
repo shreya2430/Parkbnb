@@ -17,6 +17,9 @@ public class ApiResponse<T> {
         this.error = error;
     }
 
+    public ApiResponse(boolean b, String validationErrorsOccurred, Object o) {
+    }
+
     public boolean isSuccess() {
         return success;
     }
