@@ -1,5 +1,8 @@
 package edu.neu.csye6200.parkingapp.controller;
 
+import edu.neu.csye6200.parkingapp.dto.ApiResponse;
+import edu.neu.csye6200.parkingapp.repository.RenteeRepository;
+import edu.neu.csye6200.parkingapp.repository.RenterRepository;
 import edu.neu.csye6200.parkingapp.service.RenterService;
 import edu.neu.csye6200.parkingapp.util.JwtUtil;
 import jakarta.validation.Valid;
@@ -24,6 +27,12 @@ public class RenterController {
 
     @Autowired
     private RenterService renterService;
+
+    @Autowired
+    private RenterRepository renterRepository;
+
+    @Autowired
+    private RenteeRepository renteeRepository;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -86,13 +95,29 @@ public class RenterController {
     }
 
     @PostMapping
-    public ResponseEntity<RenterDTO> createRenter(@Valid @RequestBody RenterDTO renterDTO, BindingResult bindingResult) {
+    public ResponseEntity<ApiResponse<RenterDTO>> createRenter(@Valid @RequestBody RenterDTO renterDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             // Handle validation errors
-            return ResponseEntity.badRequest().body(null);
+            ApiResponse<RenterDTO> response = new ApiResponse<>(false, "Validation errors occurred", null);
+            return ResponseEntity.badRequest().body(response);
         }
 
+        // Check if the email is already registered as a rentee
+        if (renteeRepository.findByEmail(renterDTO.getEmail()).isPresent()) {
+            ApiResponse<RenterDTO> response = new ApiResponse<>(false, "Email already registered as a rentee", null);
+            return ResponseEntity.status(409).body(response);
+        }
+
+        // Check if the email is already registered as a renter
+        if (renterRepository.findByEmail(renterDTO.getEmail()).isPresent()) {
+            ApiResponse<RenterDTO> response = new ApiResponse<>(false, "Email already registered as a renter", null);
+            return ResponseEntity.status(409).body(response);
+        }
+
+        // Save the renter
         RenterDTO savedRenter = renterService.saveRenter(renterDTO, bindingResult);
-        return ResponseEntity.ok(savedRenter);
+        ApiResponse<RenterDTO> response = new ApiResponse<>(true, "Renter registered successfully", savedRenter);
+        return ResponseEntity.status(201).body(response);
     }
+
 }
