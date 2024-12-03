@@ -3,6 +3,8 @@ package edu.neu.csye6200.parkingapp.controller;
 import edu.neu.csye6200.parkingapp.dto.ApiResponse;
 import edu.neu.csye6200.parkingapp.dto.RenteeDTO;
 import edu.neu.csye6200.parkingapp.dto.RenterDTO;
+import edu.neu.csye6200.parkingapp.model.Rentee;
+import edu.neu.csye6200.parkingapp.model.Renter;
 import edu.neu.csye6200.parkingapp.repository.RenteeRepository;
 import edu.neu.csye6200.parkingapp.repository.RenterRepository;
 import edu.neu.csye6200.parkingapp.service.RenteeService;
@@ -11,9 +13,12 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +39,9 @@ public class RenteeController {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     @GetMapping("/{id}")
     public ResponseEntity<RenteeDTO> getRentee(@PathVariable Long id) {
@@ -107,5 +115,67 @@ public class RenteeController {
         RenteeDTO savedRenter = renteeService.saveRentee(renteeDTO, bindingResult);
         ApiResponse<RenteeDTO> response = new ApiResponse<>(true, "Rentee registered successfully", savedRenter);
         return ResponseEntity.status(201).body(response);
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Map<String, String>> forgotPassword(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+
+        // Check if the email exists in the database
+        Optional<Rentee> renteeOpt = renteeRepository.findByEmail(email);
+        if (!renteeOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Collections.singletonMap("message", "Email not registered."));
+        }
+
+        // Generate password reset token
+        String resetToken = jwtUtil.generateToken(email);
+
+        // Build the reset link
+        String resetLink = "http://localhost:3000/reset-password?token=" + resetToken;
+
+        // Send email with reset link
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(email);
+            message.setSubject("Password Reset Request");
+            message.setText("Click the link to reset your password: " + resetLink);
+            mailSender.send(message);
+
+            return ResponseEntity.ok(Collections.singletonMap("message", "Password reset link sent to your email."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("message", "Error sending email."));
+        }
+    }
+
+
+    // 6. Reset Password
+    @PostMapping("/reset-password")
+    public ResponseEntity<Map<String, String>> resetPassword(@RequestBody Map<String, String> request) {
+        String token = request.get("token");
+        String newPassword = request.get("password");
+
+        try {
+            // Extract email from the reset token
+            String email = jwtUtil.extractEmail(token);
+
+            // Find the user by email
+            Optional<Rentee> renteeOpt = renteeRepository.findByEmail(email);
+            if (!renteeOpt.isPresent()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Collections.singletonMap("message", "User not found."));
+            }
+
+            // Update the user's password
+            Rentee rentee = renteeOpt.get();
+            rentee.setPassword(newPassword); // Remember to hash the password in a real-world application!
+            renteeRepository.save(rentee);
+
+            return ResponseEntity.ok(Collections.singletonMap("message", "Password has been reset successfully."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("message", "Invalid or expired token."));
+        }
     }
 }
