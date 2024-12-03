@@ -114,6 +114,7 @@ public class ReservationDTO {
 
 
     public static class ParkingLocation{
+        private Long id;
         private String street;
         private String city;
         private String state;
@@ -122,6 +123,14 @@ public class ReservationDTO {
         private String latitude;
         private String longitude;
         private String parkingLocationImage;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
 
         public String getStreet() {
             return street;
