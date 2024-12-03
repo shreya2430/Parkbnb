@@ -69,6 +69,7 @@ public class ReservationService{
             // You can also set the parking location details if needed
             if (reservation.getParkingSpot() != null && reservation.getParkingSpot().getParkingLocation() != null) {
                 ReservationDTO.ParkingLocation locationDTO = new ReservationDTO.ParkingLocation();
+                locationDTO.setId(reservation.getParkingSpot().getParkingLocation().getId());
                 locationDTO.setStreet(reservation.getParkingSpot().getParkingLocation().getStreet());
                 locationDTO.setCity(reservation.getParkingSpot().getParkingLocation().getCity());
                 locationDTO.setState(reservation.getParkingSpot().getParkingLocation().getState());
