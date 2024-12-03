@@ -7,7 +7,6 @@ import edu.neu.csye6200.parkingapp.dto.ReviewDTO;
 import edu.neu.csye6200.parkingapp.service.ParkingLocationService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 import edu.neu.csye6200.parkingapp.model.ParkingLocation;
-
 import java.io.IOException;
 
 @RestController
@@ -96,9 +94,9 @@ public class ParkingLocationController {
         return ResponseEntity.ok(parkingLocations);
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = "application/json")
     public ResponseEntity<ApiResponse<ParkingLocationDTO>> createParkingLocation(
-            @Valid @ModelAttribute ParkingLocationDTO parkingLocationDTO,
+            @Valid @RequestBody ParkingLocationDTO parkingLocationDTO,
             BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -106,13 +104,8 @@ public class ParkingLocationController {
         }
 
         try {
-            ParkingLocationDTO savedParkingLocation = parkingLocationService.saveParkingLocation(
-                    parkingLocationDTO.getUploadImage(),
-                    parkingLocationDTO,
-                    bindingResult
-            );
+            ParkingLocationDTO savedParkingLocation = parkingLocationService.saveParkingLocation(parkingLocationDTO, bindingResult);
             return ResponseEntity.ok(new ApiResponse<>(true, savedParkingLocation));
-
         } catch (IOException e) {
             return ResponseEntity.status(500).body(new ApiResponse<>(false, "Error uploading file: " + e.getMessage()));
         } catch (Exception e) {

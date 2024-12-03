@@ -17,12 +17,10 @@ import org.springframework.stereotype.Service;
 import edu.neu.csye6200.parkingapp.repository.ParkingLocationRepository;
 import edu.neu.csye6200.parkingapp.repository.RenterRepository;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.multipart.MultipartFile;
-import java.nio.file.*;
-
-import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,7 +65,7 @@ public class ParkingLocationService {
         if (parkingLocation.isPresent()) {
             ParkingLocation p = parkingLocation.get();
             Long renterId = (p.getRenter() != null) ? p.getRenter().getId() : null; // Retrieve renter ID if available
-            String imagePath = uploadDirForParkingLocations + p.getImageFileName();
+            String imagePath = "parking_locations/" + p.getImageFileName();
             ParkingLocationDTO parkingLocationDTO = new ParkingLocationDTO(p.getId(),p.getStreet(),p.getCity(),p.getPostalcode(),p.getState(),p.getCountry(),p.getLatitude(),p.getLongitude(), imagePath, renterId);
             return Optional.of(parkingLocationDTO);
         }
@@ -110,7 +108,7 @@ public class ParkingLocationService {
     }
 
 
-    public ParkingLocationDTO saveParkingLocation(MultipartFile file, @Valid ParkingLocationDTO parkingLocationDTO, BindingResult bindingResult) throws IOException {
+    public ParkingLocationDTO saveParkingLocation(@Valid ParkingLocationDTO parkingLocationDTO, BindingResult bindingResult) throws IOException {
         if (bindingResult.hasErrors()) {
             // Handle validation errors
             throw new RuntimeException("Validation failed: " + bindingResult.getAllErrors());
@@ -132,14 +130,30 @@ public class ParkingLocationService {
         geocodingService.getCoordinates(parkingLocation);
 
         // Save to database
-        ParkingLocation saveParkingLocation = parkingLocationRepository.save(parkingLocation);
+        ParkingLocation savedParkingLocation = parkingLocationRepository.save(parkingLocation);
 
-        String imagePath = uploadDirForParkingLocations + saveParkingLocation.getImageFileName();
+        String path = uploadDirForParkingLocations + savedParkingLocation.getImageFileName();
 
-        uploadParkingLocationImage(saveParkingLocation.getImageFileName(), file);
+        // Decode the base64 image to a file
+        if (parkingLocationDTO.getUploadImage() != null) {
+            byte[] imageBytes = Base64.getDecoder().decode(parkingLocationDTO.getUploadImage());
+            String imagePath = saveImage(imageBytes, path);
+        }
+
+        // Save the parking spots
+        List<ParkingSpotDTO> parkingSpots = parkingLocationDTO.getParkingSpots();
+        for (ParkingSpotDTO spotDTO : parkingSpots) {
+            ParkingSpot parkingSpot = new ParkingSpot();
+            parkingSpot.setSpotNumber(spotDTO.getSpotNumber());
+            parkingSpot.setSpotType(spotDTO.getSpotType());
+            parkingSpot.setPricePerHour(spotDTO.getPricePerHour());
+            parkingSpot.setAvailable(spotDTO.isAvailable());
+            parkingSpot.setParkingLocation(savedParkingLocation); // Associate with the saved parking location
+            parkingSpotRepository.save(parkingSpot);
+        }
 
         // Return the saved entity as DTO
-        return new ParkingLocationDTO(saveParkingLocation.getId(),saveParkingLocation.getStreet(),saveParkingLocation.getCity(),saveParkingLocation.getPostalcode(),saveParkingLocation.getState(),saveParkingLocation.getCountry(),saveParkingLocation.getLatitude(),saveParkingLocation.getLongitude(), imagePath, saveParkingLocation.getRenter().getId());
+        return new ParkingLocationDTO(savedParkingLocation.getId(),savedParkingLocation.getStreet(),savedParkingLocation.getCity(),savedParkingLocation.getPostalcode(),savedParkingLocation.getState(),savedParkingLocation.getCountry(),savedParkingLocation.getLatitude(),savedParkingLocation.getLongitude(), path, savedParkingLocation.getRenter().getId());
     }
 
     public List<ParkingSpotDTO> getAvailableSpots(Long locationId) {
@@ -180,23 +194,11 @@ public class ParkingLocationService {
         return reviewDTOs;
     }
 
-    private void uploadParkingLocationImage(String imageFileName, MultipartFile file) throws IOException {
-        // Get the absolute path of the upload directory
-        Path uploadPath = Paths.get(uploadDirForParkingLocations).toAbsolutePath();
-
-        // Ensure the directory exists or create it
-        File directory = uploadPath.toFile();
-        if (!directory.exists()) {
-            boolean dirsCreated = directory.mkdirs();
-            if (!dirsCreated) {
-                throw new IOException("Failed to create directory: " + uploadPath);
-            }
+    private String saveImage(byte[] imageBytes, String path) throws IOException {
+        String imagePath = path;
+        try (FileOutputStream fos = new FileOutputStream(imagePath)) {
+            fos.write(imageBytes);
         }
-
-        // Combine the directory path with the file name to get the full file path
-        File targetFile = uploadPath.resolve(imageFileName).toFile();
-
-        // Transfer the uploaded file to the target location
-        file.transferTo(targetFile);
+        return imagePath;
     }
 }
