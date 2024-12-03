@@ -36,7 +36,7 @@ public class ReservationService{
             dto.setParkingSpotId(res.getParkingSpot().getId());
             dto.setStartTime(res.getStartTime());
             dto.setEndTime(res.getEndTime());
-            dto.setConfirmationCode(res.getConfirmationCode());
+            //dto.setConfirmationCode(res.getConfirmationCode());
             dto.setStatus(res.getStatus());
             dto.setPaymentId(res.getPayment().getId());
             return Optional.of(dto);
@@ -47,16 +47,39 @@ public class ReservationService{
     public List<ReservationDTO> getReservationsByRenteeId(Long renteeId) {
         List<Reservation> reservations = reservationRepository.findByRenteeId(renteeId);
 
+        // Map to ReservationDTO
         return reservations.stream().map(reservation -> {
             ReservationDTO dto = new ReservationDTO();
             dto.setId(reservation.getId());
-            dto.setRenteeId(reservation.getRentee().getId());
-            dto.setParkingSpotId(reservation.getParkingSpot().getId());
             dto.setStartTime(reservation.getStartTime());
             dto.setEndTime(reservation.getEndTime());
-            dto.setConfirmationCode(reservation.getConfirmationCode());
             dto.setStatus(reservation.getStatus());
+            dto.setRenteeId(reservation.getRentee().getId());
+            dto.setParkingSpotId(reservation.getParkingSpot().getId());
             dto.setPaymentId(reservation.getPayment().getId());
+
+            // Assuming you have methods to get ParkingSpot and ParkingLocation details
+            if (reservation.getParkingSpot() != null) {
+                ReservationDTO.ParkingSpot spotDTO = new ReservationDTO.ParkingSpot();
+                spotDTO.setSpotNumber(reservation.getParkingSpot().getSpotNumber());
+                spotDTO.setParkingLocation(new ReservationDTO.ParkingLocation()); // Assuming this is a method to get the location
+                dto.setParkingSpot(spotDTO);
+            }
+
+            // You can also set the parking location details if needed
+            if (reservation.getParkingSpot() != null && reservation.getParkingSpot().getParkingLocation() != null) {
+                ReservationDTO.ParkingLocation locationDTO = new ReservationDTO.ParkingLocation();
+                locationDTO.setStreet(reservation.getParkingSpot().getParkingLocation().getStreet());
+                locationDTO.setCity(reservation.getParkingSpot().getParkingLocation().getCity());
+                locationDTO.setState(reservation.getParkingSpot().getParkingLocation().getState());
+                locationDTO.setPostalcode(reservation.getParkingSpot().getParkingLocation().getPostalcode());
+                locationDTO.setCountry(reservation.getParkingSpot().getParkingLocation().getCountry());
+                locationDTO.setLatitude(reservation.getParkingSpot().getParkingLocation().getLatitude());
+                locationDTO.setLongitude(reservation.getParkingSpot().getParkingLocation().getLongitude());
+                locationDTO.setParkingLocationImage("parking_locations/" + reservation.getParkingSpot().getParkingLocation().getImageFileName());
+                dto.getParkingSpot().setParkingLocation(locationDTO);
+            }
+
             return dto;
         }).collect(Collectors.toList());
     }
@@ -74,9 +97,7 @@ public class ReservationService{
         Reservation res = new Reservation();
         res.setStartTime(reservationDTO.getStartTime());
         res.setEndTime(reservationDTO.getEndTime());
-        res.setConfirmationCode(reservationDTO.getConfirmationCode());
         res.setStatus(reservationDTO.getStatus());
-        res.setIsEmailSent(reservationDTO.getEmailSent());
         res.setRentee(rentee);
         res.setParkingSpot(parkingSpot);
         res.setPayment(payment);
@@ -90,7 +111,6 @@ public class ReservationService{
         dto.setParkingSpotId(savedReservation.getParkingSpot().getId());
         dto.setStartTime(savedReservation.getStartTime());
         dto.setEndTime(savedReservation.getEndTime());
-        dto.setConfirmationCode(savedReservation.getConfirmationCode());
         dto.setStatus(savedReservation.getStatus());
         dto.setPaymentId(savedReservation.getPayment().getId());
         return dto;
