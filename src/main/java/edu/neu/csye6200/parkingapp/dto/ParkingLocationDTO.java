@@ -2,7 +2,8 @@ package edu.neu.csye6200.parkingapp.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import org.springframework.web.multipart.MultipartFile;
+import jakarta.validation.Valid;
+import java.util.List;
 
 public class ParkingLocationDTO {
     private Long id;
@@ -30,11 +31,14 @@ public class ParkingLocationDTO {
     private String latitude;
     private String longitude;
 
-    private MultipartFile uploadImage;
+    private String uploadImage;
 
     private String parkingLocationImage;
 
     private Long renterId;
+
+    @Valid
+    private List<ParkingSpotDTO> parkingSpots;
 
     public ParkingLocationDTO(Long id, String street, String city, String state, String postalcode, String country, String latitude, String longitude, String parkingLocationImage, Long renterId) {
         this.id = id;
@@ -83,11 +87,19 @@ public class ParkingLocationDTO {
     public Long getRenterId() {return renterId; }
     public void setRenterId(Long renterId) {this.renterId = renterId; }
 
-    public MultipartFile getUploadImage() {
+    public String getUploadImage() {
         return uploadImage;
     }
 
-    public void setUploadImage(MultipartFile uploadImage) {
+    public void setUploadImage(String uploadImage) {
         this.uploadImage = uploadImage;
+    }
+
+    public List<ParkingSpotDTO> getParkingSpots() {
+        return parkingSpots;
+    }
+
+    public void setParkingSpots(List<ParkingSpotDTO> parkingSpots) {
+        this.parkingSpots = parkingSpots;
     }
 }
