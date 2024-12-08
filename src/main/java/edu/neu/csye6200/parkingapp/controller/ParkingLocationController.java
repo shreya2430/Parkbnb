@@ -25,7 +25,7 @@ public class ParkingLocationController {
 
     // Fetch parking locations by renter ID
     @GetMapping("/renter/{renterId}")
-    public List<ParkingLocationDTO> getParkingLocationsByRenter(@PathVariable Long renterId) {
+    public List<ParkingLocation> getParkingLocationsByRenter(@PathVariable Long renterId) {
         return parkingLocationService.getParkingLocationsByRenter(renterId);
     }
 

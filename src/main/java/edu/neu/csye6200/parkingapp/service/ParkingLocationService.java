@@ -45,18 +45,8 @@ public class ParkingLocationService {
     @Value("${upload.dir.parking_locations}")
     private String uploadDirForParkingLocations;
 
-    public List<ParkingLocationDTO> getParkingLocationsByRenter(Long renterId) {
-        List<ParkingLocation> parkingLocations = parkingLocationRepository.findByRenterId(renterId);
-        if (!parkingLocations.isEmpty()) {
-            List<ParkingLocationDTO> parkingLocationDTOList = new ArrayList<>();
-            for (ParkingLocation parkingLoc : parkingLocations) {
-                String imagePath = "parking_locations/" + parkingLoc.getImageFileName();
-                ParkingLocationDTO parkingLocationDTO = new ParkingLocationDTO(parkingLoc.getId(),parkingLoc.getStreet(),parkingLoc.getCity(),parkingLoc.getPostalcode(),parkingLoc.getState(),parkingLoc.getCountry(),parkingLoc.getLatitude(),parkingLoc.getLongitude(), imagePath, renterId);
-                parkingLocationDTOList.add(parkingLocationDTO);
-            }
-            return parkingLocationDTOList;
-        }
-        return null;
+    public List<ParkingLocation> getParkingLocationsByRenter(Long renterId) {
+        return parkingLocationRepository.findByRenterId(renterId);
     }
 
     public ParkingLocation saveOrUpdateParkingLocation(ParkingLocation parkingLocation) {
