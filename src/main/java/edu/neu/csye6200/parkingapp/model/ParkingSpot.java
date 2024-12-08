@@ -20,7 +20,11 @@ public class ParkingSpot extends BaseEntity {
 
     // Foreign Key relationship with Parking Location
     @ManyToOne
-    @JoinColumn(name = "parkingLocation_id",nullable = false)
+    @JoinColumn(
+            name = "parkingLocation_id",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_parkingspot_location", value = ConstraintMode.CONSTRAINT)
+    )
     private ParkingLocation parkingLocation;
 
     public String getSpotNumber() { return spotNumber;}

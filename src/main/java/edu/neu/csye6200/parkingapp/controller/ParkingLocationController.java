@@ -25,7 +25,7 @@ public class ParkingLocationController {
 
     // Fetch parking locations by renter ID
     @GetMapping("/renter/{renterId}")
-    public List<ParkingLocation> getParkingLocationsByRenter(@PathVariable Long renterId) {
+    public List<ParkingLocationDTO> getParkingLocationsByRenter(@PathVariable Long renterId) {
         return parkingLocationService.getParkingLocationsByRenter(renterId);
     }
 
@@ -53,12 +53,12 @@ public class ParkingLocationController {
     }
 
     @GetMapping("/nearby")
-    public ResponseEntity<List<ParkingLocation>> getNearbyParkingLocations(
+    public ResponseEntity<List<ParkingLocationDTO>> getNearbyParkingLocations(
             @RequestParam Double latitude,
             @RequestParam Double longitude,
             @RequestParam Double radius) {
         try {
-            List<ParkingLocation> nearbyLocations = parkingLocationService.findNearbyLocations(latitude, longitude, radius);
+            List<ParkingLocationDTO> nearbyLocations = parkingLocationService.findNearbyLocations(latitude, longitude, radius);
             return ResponseEntity.ok(nearbyLocations);
         } catch (Exception e) {
             e.printStackTrace();
