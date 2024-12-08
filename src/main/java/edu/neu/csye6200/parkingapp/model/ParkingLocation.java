@@ -1,6 +1,9 @@
 package edu.neu.csye6200.parkingapp.model;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "parkinglocation")
 public class ParkingLocation extends BaseEntity {
@@ -30,6 +33,9 @@ public class ParkingLocation extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "renter_id",nullable = false)
     private Renter renter;
+
+    @OneToMany(mappedBy = "parkingLocation", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ParkingSpot> parkingSpots = new ArrayList<>();
 
     public String getStreet() { return street; }
     public void setStreet(String street) { this.street = street; }

@@ -45,8 +45,18 @@ public class ParkingLocationService {
     @Value("${upload.dir.parking_locations}")
     private String uploadDirForParkingLocations;
 
-    public List<ParkingLocation> getParkingLocationsByRenter(Long renterId) {
-        return parkingLocationRepository.findByRenterId(renterId);
+    public List<ParkingLocationDTO> getParkingLocationsByRenter(Long renterId) {
+        List<ParkingLocation> parkingLocations = parkingLocationRepository.findByRenterId(renterId);
+        if (!parkingLocations.isEmpty()) {
+            List<ParkingLocationDTO> parkingLocationDTOList = new ArrayList<>();
+            for (ParkingLocation parkingLoc : parkingLocations) {
+                String imagePath = "parking_locations/" + parkingLoc.getImageFileName();
+                ParkingLocationDTO parkingLocationDTO = new ParkingLocationDTO(parkingLoc.getId(),parkingLoc.getStreet(),parkingLoc.getCity(),parkingLoc.getPostalcode(),parkingLoc.getState(),parkingLoc.getCountry(),parkingLoc.getLatitude(),parkingLoc.getLongitude(), imagePath, renterId);
+                parkingLocationDTOList.add(parkingLocationDTO);
+            }
+            return parkingLocationDTOList;
+        }
+        return null;
     }
 
     public ParkingLocation saveOrUpdateParkingLocation(ParkingLocation parkingLocation) {
@@ -80,8 +90,19 @@ public class ParkingLocationService {
         return mapToDTOs(locations);
     }
 
-    public List<ParkingLocation> findNearbyLocations(Double latitude, Double longitude, double radius) {
-        return parkingLocationRepository.findNearbyLocations(latitude, longitude, radius);
+    public List<ParkingLocationDTO> findNearbyLocations(Double latitude, Double longitude, double radius) {
+        List<ParkingLocation> parkingLocations = parkingLocationRepository.findNearbyLocations(latitude, longitude, radius);
+        if (!parkingLocations.isEmpty()) {
+            List<ParkingLocationDTO> parkingLocationDTOList = new ArrayList<>();
+            for (ParkingLocation parkingLoc : parkingLocations) {
+                Long renterId = (parkingLoc.getRenter() != null) ? parkingLoc.getRenter().getId() : null;
+                String imagePath = "parking_locations/" + parkingLoc.getImageFileName();
+                ParkingLocationDTO parkingLocationDTO = new ParkingLocationDTO(parkingLoc.getId(),parkingLoc.getStreet(),parkingLoc.getCity(),parkingLoc.getPostalcode(),parkingLoc.getState(),parkingLoc.getCountry(),parkingLoc.getLatitude(),parkingLoc.getLongitude(), imagePath, renterId);
+                parkingLocationDTOList.add(parkingLocationDTO);
+            }
+            return parkingLocationDTOList;
+        }
+        return null;
     }
     public List<ParkingLocationDTO> searchByCoordinates(Double latitude, Double longitude, double radius) {
         List<ParkingLocation> locations = parkingLocationRepository.findNearbyLocations(latitude, longitude, radius);
