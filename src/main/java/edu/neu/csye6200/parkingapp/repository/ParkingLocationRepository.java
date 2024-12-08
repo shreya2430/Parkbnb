@@ -18,7 +18,7 @@ public interface ParkingLocationRepository extends JpaRepository<ParkingLocation
             "COS(RADIANS(?1)) * COS(RADIANS(CAST(latitude AS DOUBLE PRECISION))) * " +
             "COS(RADIANS(CAST(longitude AS DOUBLE PRECISION)) - RADIANS(?2)) + " +
             "SIN(RADIANS(?1)) * SIN(RADIANS(CAST(latitude AS DOUBLE PRECISION))) " +
-            ") <= ?3",
+            ") <= ?1",
             nativeQuery = true)
     List<ParkingLocation> findNearbyLocations(Double latitude, Double longitude, double radius);
 }

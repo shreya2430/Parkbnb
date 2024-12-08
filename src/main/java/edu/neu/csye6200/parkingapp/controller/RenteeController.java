@@ -2,9 +2,7 @@ package edu.neu.csye6200.parkingapp.controller;
 
 import edu.neu.csye6200.parkingapp.dto.ApiResponse;
 import edu.neu.csye6200.parkingapp.dto.RenteeDTO;
-import edu.neu.csye6200.parkingapp.dto.RenterDTO;
 import edu.neu.csye6200.parkingapp.model.Rentee;
-import edu.neu.csye6200.parkingapp.model.Renter;
 import edu.neu.csye6200.parkingapp.repository.RenteeRepository;
 import edu.neu.csye6200.parkingapp.repository.RenterRepository;
 import edu.neu.csye6200.parkingapp.service.RenteeService;
@@ -17,7 +15,6 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +32,6 @@ public class RenteeController {
 
     @Autowired
     private RenteeRepository renteeRepository;
-
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -94,18 +90,15 @@ public class RenteeController {
     @PostMapping
     public ResponseEntity<ApiResponse<RenteeDTO>> createRentee(@Valid @RequestBody RenteeDTO renteeDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            // Handle validation errors
             ApiResponse<RenteeDTO> response = new ApiResponse<>(false, "Validation errors occurred", null);
             return ResponseEntity.badRequest().body(response);
         }
 
-        // Check if the email is already registered as a rentee
         if (renteeRepository.findByEmail(renteeDTO.getEmail()).isPresent()) {
             ApiResponse<RenteeDTO> response = new ApiResponse<>(false, "Email already registered as a rentee", null);
             return ResponseEntity.status(409).body(response);
         }
 
-        // Check if the email is already registered as a renter
         if (renterRepository.findByEmail(renteeDTO.getEmail()).isPresent()) {
             ApiResponse<RenteeDTO> response = new ApiResponse<>(false, "Email already registered as a renter", null);
             return ResponseEntity.status(409).body(response);
@@ -121,20 +114,16 @@ public class RenteeController {
     public ResponseEntity<Map<String, String>> forgotPassword(@RequestBody Map<String, String> request) {
         String email = request.get("email");
 
-        // Check if the email exists in the database
         Optional<Rentee> renteeOpt = renteeRepository.findByEmail(email);
         if (!renteeOpt.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Collections.singletonMap("message", "Email not registered."));
         }
 
-        // Generate password reset token
         String resetToken = jwtUtil.generateToken(email);
 
-        // Build the reset link
         String resetLink = "http://localhost:3000/reset-password?token=" + resetToken;
 
-        // Send email with reset link
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(email);
@@ -150,26 +139,22 @@ public class RenteeController {
     }
 
 
-    // 6. Reset Password
     @PostMapping("/reset-password")
     public ResponseEntity<Map<String, String>> resetPassword(@RequestBody Map<String, String> request) {
         String token = request.get("token");
         String newPassword = request.get("password");
 
         try {
-            // Extract email from the reset token
             String email = jwtUtil.extractEmail(token);
 
-            // Find the user by email
             Optional<Rentee> renteeOpt = renteeRepository.findByEmail(email);
             if (!renteeOpt.isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Collections.singletonMap("message", "User not found."));
             }
 
-            // Update the user's password
             Rentee rentee = renteeOpt.get();
-            rentee.setPassword(newPassword); // Remember to hash the password in a real-world application!
+            rentee.setPassword(newPassword);
             renteeRepository.save(rentee);
 
             return ResponseEntity.ok(Collections.singletonMap("message", "Password has been reset successfully."));

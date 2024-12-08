@@ -1,7 +1,6 @@
 package edu.neu.csye6200.parkingapp.model;
 
 import jakarta.persistence.*;
-
 import java.sql.Timestamp;
 
 @Entity

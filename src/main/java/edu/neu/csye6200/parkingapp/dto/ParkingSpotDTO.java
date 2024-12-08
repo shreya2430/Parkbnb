@@ -54,5 +54,4 @@ public class ParkingSpotDTO {
     public Long getParkingLocationId() { return parkingLocationId; }
     public void setParkingLocationId(Long parkingLocationId) { this.parkingLocationId = parkingLocationId;}
 
-
 }

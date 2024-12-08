@@ -1,5 +1,6 @@
 package edu.neu.csye6200.parkingapp.dto;
 
+
 public class ApiResponse<T> {
     private boolean success; // Indicates if the operation was successful
     private T data;          // The actual data/dto

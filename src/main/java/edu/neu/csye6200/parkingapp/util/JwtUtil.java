@@ -10,19 +10,15 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-
     private static final long EXPIRATION_TIME = 86400000; // 24 hours
 
     private String secretKey = "1wZ!v#tQpRj7ZB8h3F*sNcL9$Hk0B0g@5Wv"; // your plain secret key
 
-    // Encode the secret key into Base64
     public String encodeSecretKey(String secret) {
         return Base64.getEncoder().encodeToString(secret.getBytes());
     }
     String encodedSecret = encodeSecretKey(secretKey);
-    // Method to generate JWT token
     public String generateToken(String email) {
-         // Encode the secret key
         return Jwts.builder()
                 .setSubject(email)
                 .signWith(SignatureAlgorithm.HS256, Base64.getDecoder().decode(encodedSecret)) // Decode and use Base64 secret

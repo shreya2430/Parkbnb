@@ -9,7 +9,7 @@ import edu.neu.csye6200.parkingapp.model.Renter;
 import edu.neu.csye6200.parkingapp.model.Review;
 import edu.neu.csye6200.parkingapp.repository.ParkingSpotRepository;
 import edu.neu.csye6200.parkingapp.repository.ReviewRepository;
-import edu.neu.csye6200.parkingapp.service.thirdparty.GeocodingService;
+import edu.neu.csye6200.parkingapp.service.external.GeocodingService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
