@@ -57,5 +57,4 @@ public class ParkingSpotController {
         parkingSpotService.deleteParkingSpot(id);
     }
 
-
 }
