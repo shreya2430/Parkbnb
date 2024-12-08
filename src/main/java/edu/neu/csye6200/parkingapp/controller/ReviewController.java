@@ -30,7 +30,6 @@ public class ReviewController {
     @PostMapping
     public ResponseEntity<ReviewDTO> createReview(@Valid @RequestBody ReviewDTO reviewDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            // Handle validation errors
             return ResponseEntity.badRequest().body(null);
         }
 

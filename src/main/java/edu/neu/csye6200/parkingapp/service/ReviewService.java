@@ -48,7 +48,6 @@ public class ReviewService {
 
     public ReviewDTO saveReview(@Valid ReviewDTO reviewDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            // Handle validation errors
             throw new RuntimeException("Validation failed: " + bindingResult.getAllErrors());
         }
 

@@ -40,7 +40,6 @@ public class ReservationController {
     @PostMapping
     public ResponseEntity<ReservationDTO> createReservation(@Valid @RequestBody ReservationDTO reservationDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            // Handle validation errors
             return ResponseEntity.badRequest().body(null);
         }
 

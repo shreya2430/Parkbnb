@@ -7,16 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Optional;
 
 
 @RestController
 @RequestMapping("/api/refunds")
-
 public class RefundController {
-
-
 
     @Autowired
     private RefundService refundService;
@@ -34,7 +30,6 @@ public class RefundController {
     @PostMapping
     public ResponseEntity<RefundDTO> createRefund(@Valid @RequestBody RefundDTO refundDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            // Handle validation errors
             return ResponseEntity.badRequest().body(null);
         }
 

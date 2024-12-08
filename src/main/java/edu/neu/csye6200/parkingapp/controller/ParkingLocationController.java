@@ -23,25 +23,6 @@ public class ParkingLocationController {
     @Autowired
     private ParkingLocationService parkingLocationService;
 
-    // Fetch parking locations by renter ID
-    @GetMapping("/renter/{renterId}")
-    public List<ParkingLocation> getParkingLocationsByRenter(@PathVariable Long renterId) {
-        return parkingLocationService.getParkingLocationsByRenter(renterId);
-    }
-
-    // Save or update parking location
-    @PutMapping("/{id}")
-    public ParkingLocation saveOrUpdateParkingLocation(@RequestBody ParkingLocation parkingLocation) {
-        return parkingLocationService.saveOrUpdateParkingLocation(parkingLocation);
-    }
-
-    // Delete parking location by ID
-    @DeleteMapping("/{id}")
-    public void deleteParkingLocation(@PathVariable Long id) {
-        parkingLocationService.deleteParkingLocation(id);
-    }
-
-
     @GetMapping("/{id}")
     public ResponseEntity<ParkingLocationDTO> getParkingLocation(@PathVariable Long id) {
         Optional<ParkingLocationDTO> parkingLocationDTO = parkingLocationService.getParkingLocationById(id);
@@ -66,7 +47,6 @@ public class ParkingLocationController {
         }
     }
 
-
     // Search for parking locations based on user input or coordinates
     @GetMapping("/search")
     public ResponseEntity<List<ParkingLocationDTO>> searchParkingLocations(
@@ -78,10 +58,8 @@ public class ParkingLocationController {
         List<ParkingLocationDTO> parkingLocations;
 
         if (query != null && !query.isEmpty()) {
-            // Search based on user input
             parkingLocations = parkingLocationService.searchByQuery(query);
         } else if (latitude != null && longitude != null) {
-            // Search based on coordinates
             parkingLocations = parkingLocationService.searchByCoordinates(latitude, longitude, radius);
         } else {
             return ResponseEntity.badRequest().build();
@@ -113,7 +91,6 @@ public class ParkingLocationController {
         }
     }
 
-
     @GetMapping("/{id}/available-spots")
     public ResponseEntity<List<ParkingSpotDTO>> getAvailableParkingSpots(@PathVariable Long id) {
         List<ParkingSpotDTO> availableSpots = parkingLocationService.getAvailableSpots(id);
@@ -127,5 +104,20 @@ public class ParkingLocationController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
         return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/renter/{renterId}")
+    public List<ParkingLocation> getParkingLocationsByRenter(@PathVariable Long renterId) {
+        return parkingLocationService.getParkingLocationsByRenter(renterId);
+    }
+
+    @PutMapping("/{id}")
+    public ParkingLocation saveOrUpdateParkingLocation(@RequestBody ParkingLocation parkingLocation) {
+        return parkingLocationService.saveOrUpdateParkingLocation(parkingLocation);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteParkingLocation(@PathVariable Long id) {
+        parkingLocationService.deleteParkingLocation(id);
     }
 }

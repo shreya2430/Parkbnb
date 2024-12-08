@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 
 import java.util.List;
 import java.util.Optional;
+
 @Service
 public class ParkingSpotService {
 
@@ -47,28 +48,23 @@ public class ParkingSpotService {
 
     public ParkingSpotDTO saveParkingLocation(@Valid ParkingSpotDTO parkingSpotDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            // Handle validation errors
             throw new RuntimeException("Validation failed: " + bindingResult.getAllErrors());
         }
 
-        // Convert DTO to entity
         ParkingSpot parkingSpot = new ParkingSpot();
         parkingSpot.setSpotNumber(parkingSpotDTO.getSpotNumber());
         parkingSpot.setSpotType(parkingSpotDTO.getSpotType());
         parkingSpot.setAvailable(parkingSpotDTO.isAvailable());
         parkingSpot.setPricePerHour(parkingSpotDTO.getPricePerHour());
 
-        // Set parking location if parking location is provided
         if (parkingSpotDTO.getParkingLocationId() != null) {
             ParkingLocation r = parkingLocationRepository.findById(parkingSpotDTO.getParkingLocationId())
                     .orElseThrow(() -> new RuntimeException("Renter not found with ID: " + parkingSpotDTO.getParkingLocationId()));
             parkingSpot.setParkingLocation(r);
         }
 
-        // Save to database
         ParkingSpot saveParkingSpot = parkingSpotRepository.save(parkingSpot);
 
-        // Return the saved entity as DTO
         return new ParkingSpotDTO(saveParkingSpot.getId(),saveParkingSpot.getSpotNumber(),saveParkingSpot.getSpotType(),saveParkingSpot.isAvailable(),saveParkingSpot.getPricePerHour(),saveParkingSpot.getParkingLocation().getId());
     }
 }

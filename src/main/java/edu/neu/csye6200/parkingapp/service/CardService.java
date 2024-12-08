@@ -20,7 +20,6 @@ public class CardService {
     RenteeRepository renteeRepository;
 
     public CardDTO addCard(CardDTO cardDTO) {
-        // Add card to the database
         Card card = new Card();
         card.setLast4(cardDTO.getLast4());
         card.setCardType(cardDTO.getCardType());
@@ -28,7 +27,6 @@ public class CardService {
         card.setExpiryDate(cardDTO.getExpiryDate());
         card.setCardHolderName(cardDTO.getCardHolderName());
 
-        //retireve rentee from the database
         Rentee rentee = renteeRepository.findById(cardDTO.getRenteeId())
                 .orElseThrow(() -> new IllegalArgumentException("Rentee not found"));
 
@@ -38,7 +36,6 @@ public class CardService {
     }
 
     public List<CardDTO> getCardsByRenteeId(Long renteeId) {
-        // Retrieve cards from the database
         List<Card> cards = cardRepository.findByRenteeId(renteeId);
         return cards.stream()
                 .map(this::convertToDTO)

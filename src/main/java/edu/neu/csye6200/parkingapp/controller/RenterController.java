@@ -37,9 +37,10 @@ public class RenterController {
 
     @Autowired
     private JwtUtil jwtUtil;
+
     @Autowired
     private JavaMailSender mailSender;
-    // 1. Get Renter Details
+
     @GetMapping("/{id}")
     public ResponseEntity<RenterDTO> getRenter(@PathVariable Long id) {
         Optional<RenterDTO> renterDTO = renterService.getRenterById(id);
@@ -50,7 +51,6 @@ public class RenterController {
         }
     }
 
-    // 2. Login
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody RenterDTO renterDTO) {
         try {
@@ -74,7 +74,6 @@ public class RenterController {
         }
     }
 
-    // 3. Validate Token
     @GetMapping("/validate")
     public ResponseEntity<String> validateToken(@RequestHeader("Authorization") String authHeader) {
         try {
@@ -90,7 +89,6 @@ public class RenterController {
         }
     }
 
-    // 4. Register Renter
     @PostMapping
     public ResponseEntity<ApiResponse<RenterDTO>> createRenter(@Valid @RequestBody RenterDTO renterDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -117,20 +115,16 @@ public class RenterController {
     public ResponseEntity<Map<String, String>> forgotPassword(@RequestBody Map<String, String> request) {
         String email = request.get("email");
 
-        // Check if the email exists in the database
         Optional<Renter> renterOpt = renterRepository.findByEmail(email);
         if (!renterOpt.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Collections.singletonMap("message", "Email not registered."));
         }
 
-        // Generate password reset token
         String resetToken = jwtUtil.generateToken(email);
 
-        // Build the reset link
         String resetLink = "http://localhost:3000/reset-password?token=" + resetToken;
 
-        // Send email with reset link
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(email);
@@ -146,26 +140,22 @@ public class RenterController {
     }
 
 
-    // 6. Reset Password
     @PostMapping("/reset-password")
     public ResponseEntity<Map<String, String>> resetPassword(@RequestBody Map<String, String> request) {
         String token = request.get("token");
         String newPassword = request.get("password");
 
         try {
-            // Extract email from the reset token
             String email = jwtUtil.extractEmail(token);
 
-            // Find the user by email
             Optional<Renter> renterOpt = renterRepository.findByEmail(email);
             if (!renterOpt.isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Collections.singletonMap("message", "User not found."));
             }
 
-            // Update the user's password
             Renter renter = renterOpt.get();
-            renter.setPassword(newPassword); // Remember to hash the password in a real-world application!
+            renter.setPassword(newPassword);
             renterRepository.save(renter);
 
             return ResponseEntity.ok(Collections.singletonMap("message", "Password has been reset successfully."));
@@ -174,6 +164,4 @@ public class RenterController {
                     .body(Collections.singletonMap("message", "Invalid or expired token."));
         }
     }
-
-
 }

@@ -1,9 +1,7 @@
 package edu.neu.csye6200.parkingapp.service;
 
 import edu.neu.csye6200.parkingapp.dto.RenteeDTO;
-import edu.neu.csye6200.parkingapp.dto.RenterDTO;
 import edu.neu.csye6200.parkingapp.model.Rentee;
-import edu.neu.csye6200.parkingapp.model.Renter;
 import edu.neu.csye6200.parkingapp.repository.RenteeRepository;
 import jakarta.validation.Valid;
 import org.mindrot.jbcrypt.BCrypt;
@@ -39,7 +37,7 @@ public class RenteeService {
                 return Optional.of(renteeDTO);
             }
         }
-        return Optional.empty();  // Invalid login credentials
+        return Optional.empty();
     }
 
     public RenteeDTO saveRentee(@Valid RenteeDTO renteeDTO, BindingResult bindingResult) {
