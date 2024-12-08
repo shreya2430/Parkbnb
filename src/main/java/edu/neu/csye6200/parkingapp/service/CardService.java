@@ -4,6 +4,7 @@ import edu.neu.csye6200.parkingapp.dto.CardDTO;
 import edu.neu.csye6200.parkingapp.model.Card;
 import edu.neu.csye6200.parkingapp.model.Rentee;
 import edu.neu.csye6200.parkingapp.repository.CardRepository;
+import edu.neu.csye6200.parkingapp.repository.PaymentRepository;
 import edu.neu.csye6200.parkingapp.repository.RenteeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,9 @@ public class CardService {
 
     @Autowired
     RenteeRepository renteeRepository;
+
+    @Autowired
+    PaymentRepository paymentRepository;
 
     public CardDTO addCard(CardDTO cardDTO) {
         Card card = new Card();
@@ -65,5 +69,16 @@ public class CardService {
         card.setRentee(rentee);
 
         return card;
+    }
+
+    public void deleteCard(Long cardId) {
+        if (paymentRepository.existsByCardId(cardId)) {
+            throw new IllegalStateException("This card is associated with existing payments. Please remove payments first.");
+        }
+        if (cardRepository.existsById(cardId)) {
+            cardRepository.deleteById(cardId);
+        } else {
+            throw new RuntimeException("Card not found");
+        }
     }
 }
