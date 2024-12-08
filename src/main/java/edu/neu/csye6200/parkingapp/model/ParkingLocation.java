@@ -8,19 +8,19 @@ import java.util.List;
 @Table(name = "parkinglocation")
 public class ParkingLocation extends BaseEntity {
 
-    @Column(name = "street",nullable = false , length = 20)
+    @Column(name = "street",nullable = false , length = 100)
     private  String street;
 
-    @Column(name = "city",nullable = false , length = 20)
+    @Column(name = "city",nullable = false , length = 50)
     private  String city;
 
-    @Column(name = "state",nullable = false , length = 20)
+    @Column(name = "state",nullable = false , length = 50)
     private  String state;
 
     @Column(name = "postalcode",nullable = false , length = 8)
     private  String postalcode;
 
-    @Column(name = "country",nullable = false , length = 30)
+    @Column(name = "country",nullable = false , length = 50)
     private  String country;
 
     @Column(name = "latitude",nullable = false , length = 30)
