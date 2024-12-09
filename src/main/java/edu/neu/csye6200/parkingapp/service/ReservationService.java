@@ -93,7 +93,7 @@ public class ReservationService{
 
         Rentee rentee = renteeRepository.getById(reservationDTO.getRenteeId());
         ParkingSpot parkingSpot = parkingSpotRepository.getById(reservationDTO.getParkingSpotId());
-        Payment payment = paymentRepository.getById(reservationDTO.getPaymentId());
+        Payment payment = paymentRepository.findByStripePaymentId(reservationDTO.getPaymentIntentId());
 
         Reservation res = new Reservation();
         res.setStartTime(reservationDTO.getStartTime());
