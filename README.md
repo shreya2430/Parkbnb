@@ -101,7 +101,7 @@ Parkbnb is a comprehensive parking management system designed to simplify parkin
 - Open application.properties or application.yml in the src/main/resources directory.
   - **Update the database credentials:** 
     - spring.application.name=parking-application
-    - pring.datasource.url=jdbc:postgresql://localhost:5432/parking_db
+    - spring.datasource.url=jdbc:postgresql://localhost:5432/parking_db
     - spring.datasource.username=postgres
     - spring.datasource.password=postgres
   
