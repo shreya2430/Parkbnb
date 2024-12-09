@@ -3,6 +3,7 @@ package edu.neu.csye6200.parkingapp.service;
 import edu.neu.csye6200.parkingapp.dto.ReservationDTO;
 import edu.neu.csye6200.parkingapp.model.*;
 import edu.neu.csye6200.parkingapp.repository.*;
+import edu.neu.csye6200.parkingapp.service.interfaces.IReservationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class ReservationService{
+public class ReservationService implements IReservationService {
 
     @Autowired
     private  ReservationRepository reservationRepository;

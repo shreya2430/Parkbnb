@@ -125,6 +125,7 @@ public class ParkingLocationService {
                 imagePath,
                 location.getRenter().getId());
     }
+
     public List<ParkingLocationDTO> searchByCoordinates(Double latitude, Double longitude, double radius) {
         List<ParkingLocation> locations = parkingLocationRepository.findNearbyLocations(latitude, longitude, radius);
         return mapToDTOs(locations);

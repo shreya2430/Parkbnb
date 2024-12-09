@@ -2,7 +2,7 @@ package edu.neu.csye6200.parkingapp.controller;
 
 import com.stripe.exception.StripeException;
 import edu.neu.csye6200.parkingapp.dto.PaymentDTO;
-import edu.neu.csye6200.parkingapp.service.PaymentService;
+import edu.neu.csye6200.parkingapp.service.interfaces.IPaymentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ import java.util.Optional;
 public class PaymentController {
 
     @Autowired
-    private PaymentService paymentService;
+    private IPaymentService paymentService;
 
     /**
      * Endpoint to create a payment.
