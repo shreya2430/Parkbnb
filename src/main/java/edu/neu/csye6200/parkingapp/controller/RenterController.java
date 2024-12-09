@@ -1,10 +1,12 @@
 package edu.neu.csye6200.parkingapp.controller;
 
 import edu.neu.csye6200.parkingapp.dto.ApiResponse;
+import edu.neu.csye6200.parkingapp.dto.RenteeDTO;
 import edu.neu.csye6200.parkingapp.model.Renter;
 import edu.neu.csye6200.parkingapp.repository.RenteeRepository;
 import edu.neu.csye6200.parkingapp.repository.RenterRepository;
 import edu.neu.csye6200.parkingapp.service.RenterService;
+import edu.neu.csye6200.parkingapp.service.interfaces.IUserService;
 import edu.neu.csye6200.parkingapp.util.JwtUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,7 @@ import java.util.Optional;
 public class RenterController {
 
     @Autowired
-    private RenterService renterService;
+    private IUserService<RenterDTO> renterService;
 
     @Autowired
     private RenterRepository renterRepository;
@@ -43,7 +45,7 @@ public class RenterController {
 
     @GetMapping("/{id}")
     public ResponseEntity<RenterDTO> getRenter(@PathVariable Long id) {
-        Optional<RenterDTO> renterDTO = renterService.getRenterById(id);
+        Optional<RenterDTO> renterDTO = renterService.getUserById(id);
         if (renterDTO.isPresent()) {
             return ResponseEntity.ok(renterDTO.get());
         } else {
@@ -106,7 +108,7 @@ public class RenterController {
             return ResponseEntity.status(409).body(response);
         }
 
-        RenterDTO savedRenter = renterService.saveRenter(renterDTO, bindingResult);
+        RenterDTO savedRenter = renterService.saveUser(renterDTO, bindingResult);
         ApiResponse<RenterDTO> response = new ApiResponse<>(true, "Renter registered successfully", savedRenter);
         return ResponseEntity.status(201).body(response);
     }

@@ -6,7 +6,7 @@ import edu.neu.csye6200.parkingapp.dto.PaymentDTO;
 import java.util.Optional;
 
 public interface IPaymentService {
-    public String createPayment(PaymentDTO paymentDTO) throws StripeException;
+    String createPayment(PaymentDTO paymentDTO) throws StripeException;
 
     Optional<PaymentDTO> getPaymentById(Long id);
 }

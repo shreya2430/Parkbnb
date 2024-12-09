@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IReservationService {
-    public List<ReservationDTO> getReservationsByRenteeId(Long renteeId);
-    public ReservationDTO saveReservation(@Valid ReservationDTO reservationDTO, BindingResult bindingResult);
+    List<ReservationDTO> getReservationsByRenteeId(Long renteeId);
+    ReservationDTO saveReservation(@Valid ReservationDTO reservationDTO, BindingResult bindingResult);
     Optional<ReservationDTO> getReservationById(Long id);
 }
