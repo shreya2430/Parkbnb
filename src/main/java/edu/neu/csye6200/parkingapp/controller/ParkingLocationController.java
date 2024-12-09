@@ -53,7 +53,7 @@ public class ParkingLocationController {
             @RequestParam(value = "query", required = false) String query,
             @RequestParam(value = "latitude", required = false) Double latitude,
             @RequestParam(value = "longitude", required = false) Double longitude,
-            @RequestParam(value = "radius", defaultValue = "5") double radius) {
+            @RequestParam(value = "radius", defaultValue = "1") double radius) {
 
         List<ParkingLocationDTO> parkingLocations;
 
