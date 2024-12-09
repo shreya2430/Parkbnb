@@ -16,12 +16,13 @@ Parkbnb is a comprehensive parking management system designed to simplify parkin
 - **Google Maps API:** Map integration for parking spot navigation.
 - **Opencage Geocoding API:** Address-to-coordinates conversion.
 - **Stripe Payment Integration:** Secure payment processing.
+- **Bcrypt.js:** Password hashing for user security.
 
 ***Back End***
 - **Java (Spring Boot):** Monolith architecture adhering to SOLID principles.
 - **Spring Data JPA:** Database operations.
 - **PostgreSQL:** Relational database for entity management
-- **Security:** JWT for authentication and OAuth 2.0 for secure payment processing
+- **Security:** JWT for authentication and authorization.
 
 ## Key Functionalities
 - **Parking Spot Management:** Add, edit, delete, and search for parking spots.
@@ -57,7 +58,6 @@ Parkbnb is a comprehensive parking management system designed to simplify parkin
 - Inheritance
 - Polymorphism
 - Encapsulation
-- Dependency Injection
 
 ## Project Contributions
 ***Frontend***
@@ -81,10 +81,61 @@ Parkbnb is a comprehensive parking management system designed to simplify parkin
 - Refunds
 
 
+# How to run Parkbnb
 
+***Prerequisites***
 
+**Before running the project, ensure you have the following installed:**
+- Java 23
+- Maven
+- Node.js (for the frontend)
+- PostgreSQL
+- Git
 
+`1. Clone the Repository`
+- git clone <repository-url>
 
+`2. Run the Backend`
+
+***Configure Database***
+- Open application.properties or application.yml in the src/main/resources directory.
+- **Update the database credentials:** 
+  
+  spring.application.name=parking-application
+  spring.datasource.url=jdbc:postgresql://localhost:5432/parking_db
+  spring.datasource.username=postgres
+
+  spring.datasource.password=postgres
+  
+- **Create a PostgreSQL database named parking_db:**
+    
+    CREATE DATABASE parking_db;
+
+***Install Dependencies***
+- mvn clean install
+- mvn spring-boot:run
+    
+`3. Run the Frontend`
+
+***Install Dependencies***
+**Run the following npm command to install frontend dependencies:**
+- npm install
+
+`4. Start the Application`
+- npm start
+
+`Stripe Payment Integration`
+- Configuration - Configured Stripe in Test Mode to enable secure payment handling for the app.
+- Backend Services -  Created backend services to handle payment intents and integrated them with the frontend.
+- Error Handling - Implemented error handling to display relevant messages for failed payments (e.g., insufficient funds, card declined).
+- Receipt Generation - Generated receipts for successful payments and displayed detailed error messages for failures.
+- Test Card Support : Successful Examples
+
+  - Visa: 4242 4242 4242 4242
+  - Mastercard: 5555 5555 5555 4444 
+  - American Express: 3782 822463 10005
+  - Generic Decline: 4000 0000 0000 0002 
+  - Insufficient Funds: 4000 0000 0000 9995
 
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/6xRviSdT)
 # Welcome to the course CSYE6200- Concepts of Object Oriented Design
