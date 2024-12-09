@@ -25,6 +25,8 @@ public class ReservationDTO {
     @NotBlank(message = "Payment ID is required")
     private Long paymentId;
 
+    private String paymentIntentId;
+
     private ParkingSpot parkingSpot;
 
     public Long getId() {
@@ -89,6 +91,14 @@ public class ReservationDTO {
 
     public void setParkingSpot(ParkingSpot parkingSpot) {
         this.parkingSpot = parkingSpot;
+    }
+
+    public String getPaymentIntentId() {
+        return paymentIntentId;
+    }
+
+    public void setPaymentIntentId(String paymentIntentId) {
+        this.paymentIntentId = paymentIntentId;
     }
 
     public static class ParkingSpot{
