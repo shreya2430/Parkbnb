@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ParkingLocationService {
@@ -80,19 +81,49 @@ public class ParkingLocationService {
         return mapToDTOs(locations);
     }
 
-    public List<ParkingLocationDTO> findNearbyLocations(Double latitude, Double longitude, double radius) {
-        List<ParkingLocation> parkingLocations = parkingLocationRepository.findNearbyLocations(latitude, longitude, radius);
-        if (!parkingLocations.isEmpty()) {
-            List<ParkingLocationDTO> parkingLocationDTOList = new ArrayList<>();
-            for (ParkingLocation parkingLoc : parkingLocations) {
-                Long renterId = (parkingLoc.getRenter() != null) ? parkingLoc.getRenter().getId() : null;
-                String imagePath = "parking_locations/" + parkingLoc.getImageFileName();
-                ParkingLocationDTO parkingLocationDTO = new ParkingLocationDTO(parkingLoc.getId(),parkingLoc.getStreet(),parkingLoc.getCity(),parkingLoc.getPostalcode(),parkingLoc.getState(),parkingLoc.getCountry(),parkingLoc.getLatitude(),parkingLoc.getLongitude(), imagePath, renterId);
-                parkingLocationDTOList.add(parkingLocationDTO);
-            }
-            return parkingLocationDTOList;
-        }
-        return null;
+    public List<ParkingLocationDTO> findNearbyLocations(Double latitude, Double longitude, Double radius) {
+        List<ParkingLocation> allLocations = parkingLocationRepository.findAll();
+        return allLocations.stream()
+                .filter(location -> {
+                    try {
+                        // Parse latitude and longitude from String to Double
+                        double locationLat = Double.parseDouble(location.getLatitude());
+                        double locationLon = Double.parseDouble(location.getLongitude());
+                        return calculateDistance(latitude, longitude, locationLat, locationLon) <= radius;
+                    } catch (NumberFormatException e) {
+                        // Handle invalid format, if necessary
+                        return false;
+                    }
+                })
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        final int EARTH_RADIUS = 6371; // Radius in kilometers
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return EARTH_RADIUS * c; // Distance in kilometers
+    }
+
+    private ParkingLocationDTO convertToDTO(ParkingLocation location) {
+        // Map ParkingLocation to ParkingLocationDTO
+
+        String imagePath = "parking_locations/" + location.getImageFileName();
+        return new ParkingLocationDTO( location.getId(),
+                location.getStreet(),
+                location.getCity(),
+                location.getPostalcode(),
+                location.getState(),
+                location.getCountry(),
+                location.getLatitude(),
+                location.getLongitude(),
+                imagePath,
+                location.getRenter().getId());
     }
     public List<ParkingLocationDTO> searchByCoordinates(Double latitude, Double longitude, double radius) {
         List<ParkingLocation> locations = parkingLocationRepository.findNearbyLocations(latitude, longitude, radius);
