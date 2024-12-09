@@ -1,7 +1,7 @@
 package edu.neu.csye6200.parkingapp.controller;
 
 import edu.neu.csye6200.parkingapp.dto.ReservationDTO;
-import edu.neu.csye6200.parkingapp.service.ReservationService;
+import edu.neu.csye6200.parkingapp.service.interfaces.IReservationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import java.util.Optional;
 public class ReservationController {
 
     @Autowired
-    private  ReservationService reservationService;
+    private IReservationService reservationService;
 
     @GetMapping("/{id}")
     public ResponseEntity<ReservationDTO> getReservationById(@PathVariable Long id) {
