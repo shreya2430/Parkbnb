@@ -14,6 +14,7 @@ import edu.neu.csye6200.parkingapp.model.Rentee;
 import edu.neu.csye6200.parkingapp.repository.CardRepository;
 import edu.neu.csye6200.parkingapp.repository.PaymentRepository;
 import edu.neu.csye6200.parkingapp.repository.RenteeRepository;
+import edu.neu.csye6200.parkingapp.service.interfaces.IPaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class PaymentService {
+public class PaymentService implements IPaymentService {
 
     @Autowired
     private PaymentRepository paymentRepository;
