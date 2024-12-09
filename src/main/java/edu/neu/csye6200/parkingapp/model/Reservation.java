@@ -7,20 +7,14 @@ import java.sql.Timestamp;
 @Table(name = "reservation")
 public class Reservation extends BaseEntity {
 
-    @Column(name = "start_time", nullable = false, length = 30)
+    @Column(name = "start_time", nullable = false, length = 50)
     private Timestamp startTime;
 
-    @Column(name = "end_time", nullable = false, length = 30)
+    @Column(name = "end_time", nullable = false, length = 50)
     private Timestamp endTime;
-
-    @Column(name = "confirmation_code", nullable = false, length = 10)
-    private String confirmationCode;
 
     @Column(name = "status", nullable = false, length = 15)
     private String status;
-
-    @Column(name = "is_email_sent", nullable = false)
-    private Boolean isEmailSent;
 
     // Foreign key to Rentee
     @ManyToOne
@@ -54,28 +48,12 @@ public class Reservation extends BaseEntity {
         this.endTime = endTime;
     }
 
-    public String getConfirmationCode() {
-        return confirmationCode;
-    }
-
-    public void setConfirmationCode(String confirmationCode) {
-        this.confirmationCode = confirmationCode;
-    }
-
     public String getStatus() {
         return status;
     }
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public Boolean getIsEmailSent() {
-        return isEmailSent;
-    }
-
-    public void setIsEmailSent(Boolean isEmailSent) {
-        this.isEmailSent = isEmailSent;
     }
 
     public Rentee getRentee() {
