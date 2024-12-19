@@ -116,7 +116,8 @@ https://northeastern-my.sharepoint.com/:v:/r/personal/patel_vanshi_northeastern_
 - mvn spring-boot:run
     
 `3. Run the Frontend`
-
+- Download and unzip FrontEndRepo-main 
+- Open the unzipped FrontEndRepo-main folder in an IDE like Visual Studio Code.
 ***Install Dependencies***
 **Run the following npm command to install frontend dependencies:**
 - npm install
