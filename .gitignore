@@ -17,7 +17,8 @@
 target/
 *.iml
 *.ipr
-
+application.properties
+.ds_store
 
 # Generated files
 .idea
